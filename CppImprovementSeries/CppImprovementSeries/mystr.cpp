@@ -6,6 +6,7 @@ typedef const char* CHARPTR;
 
 class mystr {
 public:
+	// null-terminated string is expected
 	mystr(const char* data = nullptr)
 		: data_(nullptr)
 		, size_(0)
@@ -13,7 +14,7 @@ public:
 		cout << "dflt c-tor : 0x" << hex << this << dec << endl;
 		if (!data) return;
 
-		size_ = strlen(data);
+		size_ = strlen(data) + 1;
 		data_ = new char[size_];
 		memcpy(data_, data, size_);
 	}
@@ -42,7 +43,7 @@ public:
 		return move_internal(std::move(copy));
 	}
 	const char* data() const { return data_; }
-	const size_t size() const { return size_; }
+	const size_t size() const { return size_ == 0 ? 0 : size_ - 1; }
 
 	operator CHARPTR() const {
 		return data_;
@@ -73,6 +74,7 @@ private:
 		size_ = copy.size_;
 
 		copy.data_ = nullptr;
+		copy.size_ = 0;
 
 		return *this;
 	}
