@@ -5,4 +5,5 @@ int main()
 {
     String s("aaa");
     String s2 = s;
+    std::cout << s2;
 }
