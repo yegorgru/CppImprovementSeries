@@ -2,10 +2,12 @@
 
 #include <memory>
 #include <string>
+#include <iostream>
 
 class String {
 public:
 	String(const char* data = nullptr);
+	String(const std::string& data);
 	String(const String& copy);
 	String& operator=(const String& copy);
 	String(String&& copy) = default;
@@ -15,7 +17,7 @@ public:
 	void reserve(size_t newCapacity);
 	std::string toString() const;
 public:
-	size_t getSize() const { 
+	size_t getSize() const {
 		return mSize == 0 ? 0 : mSize - 1;
 	}
 	size_t getCapacity() const {
