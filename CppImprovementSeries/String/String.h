@@ -10,8 +10,8 @@ public:
 	String(const std::string& data);
 	String(const String& other);
 	String& operator=(const String& other);
-	String(String&& other) = default;
-	String& operator=(String&& other) = default;
+	String(String&& other);
+	String& operator=(String&& other);
 	~String() = default;
 public:
 	void reserve(size_t newCapacity);
@@ -35,7 +35,8 @@ public:
 	friend std::ostream& operator<<(std::ostream& os, const String& str);
 private:
 	void reserve(size_t newCapacity, bool copyData);
-	String& copyInternal(const String& copy);
+	String& copyInternal(const String& other);
+	String& moveInternal(String&& other);
 	void reallocateData(size_t capacity, bool copyData);
 private:
 	using Data = std::unique_ptr<char[]>;

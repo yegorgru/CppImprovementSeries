@@ -28,8 +28,19 @@ String::String(const String& other)
 	copyInternal(other);
 }
 
+String::String(String&& other)
+	: mSize(0)
+	, mCapacity(0)
+{
+	moveInternal(std::move(other));
+}
+
 String& String::operator=(const String& other) {
 	return copyInternal(other);
+}
+
+String& String::operator=(String&& other) {
+	return moveInternal(std::move(other));
 }
 
 void String::reserve(size_t newCapacity) {
@@ -49,20 +60,32 @@ void String::reserve(size_t newCapacity, bool copyData) {
 	}
 }
 
-String& String::copyInternal(const String& copy) {
-	if (this == &copy) {
+String& String::copyInternal(const String& other) {
+	if (this == &other) {
 		return *this;
 	}
 
-	reserve(copy.mSize, false);
-	mSize = copy.mSize;
+	reserve(other.mSize, false);
+	mSize = other.mSize;
 	if (!mSize) {
 		mData.reset();
 		return *this;
 	}
 
-	std::memcpy(mData.get(), copy.mData.get(), mSize);
+	std::memcpy(mData.get(), other.mData.get(), mSize);
 
+	return *this;
+}
+
+String& String::moveInternal(String&& other) {
+	if (this == &other) {
+		return *this;
+	}
+	mData = std::move(other.mData);
+	mSize = other.mSize;
+	mCapacity = other.mCapacity;
+	other.mSize = 0;
+	other.mCapacity = 0;
 	return *this;
 }
 

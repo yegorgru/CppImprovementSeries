@@ -17,9 +17,19 @@ private:
 	void addString();
 	void removeString();
 	void printStrings();
+	void assignString();
+	void moveString();
+	void concatenateCreateNew();
+	void concatenateAppend();
+	void compareEqual();
+	void compareGreater();
+	void compareSmaller();
+	void compareEqualOrGreater();
+	void compareEqualOrSmaller();
 private:
-	size_t getStringIdx();
+	size_t getStringIdx(const String& message);
 	void createMenu();
+	bool isEmptyStorage() const;
 private:
 	using StringStorage = std::vector<String>;
 private:

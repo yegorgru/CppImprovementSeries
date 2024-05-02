@@ -24,7 +24,7 @@ AbstractLevelPtr MenuLevel::makeAction() {
 		if (found != mChildren.end()) {
 			return found->second;
 		}
-		else if (ch == getBackSymbol() && is_uninitialized(mParent)) {
+		else if (ch == getBackSymbol() && !is_uninitialized(mParent)) {
 			return mParent.lock();
 		}
 		else if (ch == getExitSymbol()) {
@@ -42,7 +42,7 @@ void MenuLevel::printNextOptions() {
 		child.second->printLevel();
 		std::cout << " ";
 	}
-	if (is_uninitialized(mParent)) {
+	if (!is_uninitialized(mParent)) {
 		std::cout << getBackSymbol() << " - back" << " ";
 	}
 	std::cout << getExitSymbol() << " - exit";
