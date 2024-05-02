@@ -23,8 +23,8 @@ public:
 public:
 	AbstractLevel(Type type, MenuSymbol symbol, const Description& description, AbstractLevelPtr parent);
 public:
-	virtual AbstractLevelPtr makeAction() = 0;
-	void printLevel();
+	virtual AbstractLevelPtr makeAction() const = 0;
+	void printLevel() const;
 public:
 	Type getType() const {
 		return mType;
@@ -39,9 +39,9 @@ public:
 		return 'e';
 	}
 protected:
+	Type mType;
 	MenuSymbol mSymbol;
 	Description mDescription;
-	Type mType;
 	ParentPtr mParent;
 };
 

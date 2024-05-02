@@ -11,7 +11,7 @@ ActionLevel::ActionLevel(MenuSymbol symbol, const Description& description, Abst
 
 }
 
-AbstractLevelPtr ActionLevel::makeAction() {
+AbstractLevelPtr ActionLevel::makeAction() const {
 	mFunction();
 	return mParent.lock();
 }

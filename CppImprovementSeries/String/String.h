@@ -31,7 +31,7 @@ public:
 	bool operator>=(const String& other) const;
 	String operator+(const String& other);
 	String& operator+=(const String& other);
-	operator const char* () const;
+	operator const char*() const;
 	friend std::ostream& operator<<(std::ostream& os, const String& str);
 private:
 	void reserve(size_t newCapacity, bool copyData);

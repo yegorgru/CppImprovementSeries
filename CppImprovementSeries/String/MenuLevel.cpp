@@ -13,7 +13,7 @@ MenuLevel::MenuLevel(MenuSymbol symbol, const Description& description, Abstract
 
 }
 
-AbstractLevelPtr MenuLevel::makeAction() {
+AbstractLevelPtr MenuLevel::makeAction() const {
 	while (true) {
 		printNextOptions();
 		if (std::cin.rdbuf()->in_avail() > 0) {
@@ -37,7 +37,7 @@ void MenuLevel::addChild(AbstractLevelPtr child) {
 	mChildren[child->getSymbol()] = child;
 }
 
-void MenuLevel::printNextOptions() {
+void MenuLevel::printNextOptions() const {
 	for (auto child : mChildren) {
 		child.second->printLevel();
 		std::cout << " ";

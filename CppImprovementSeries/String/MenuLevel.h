@@ -18,12 +18,14 @@ public:
 	MenuLevel& operator=(MenuLevel&& other) = default;
 	~MenuLevel() = default;
 public:
-	AbstractLevelPtr makeAction() override;
+	AbstractLevelPtr makeAction() const override;
 	void addChild(AbstractLevelPtr child);
 private:
-	void printNextOptions();
+	void printNextOptions() const;
 private:
-	std::map<MenuSymbol, AbstractLevelPtr> mChildren;
+	using ChildrenStorage = std::map<MenuSymbol, AbstractLevelPtr>;
+private:
+	ChildrenStorage mChildren;
 };
 
 }

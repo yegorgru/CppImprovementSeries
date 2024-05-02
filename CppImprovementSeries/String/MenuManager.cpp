@@ -21,6 +21,45 @@ void MenuManager::run() {
 	}
 }
 
+void MenuManager::createMenu() {
+	using namespace Menu;
+	int id = 0;
+	auto root = std::make_shared<MenuLevel>(' ', "", nullptr);
+
+	auto addString = std::make_shared<ActionLevel>('1', "add new String", root, [this]() { this->addString(); });
+	root->addChild(addString);
+	auto removeString = std::make_shared<ActionLevel>('2', "remove String", root, [this]() { this->removeString(); });
+	root->addChild(removeString);
+	auto printStrings = std::make_shared<ActionLevel>('3', "print added strings", root, [this]() { this->printStrings(); });
+	root->addChild(printStrings);
+	auto assignString = std::make_shared<ActionLevel>('4', "assign", root, [this]() { this->assignString(); });
+	root->addChild(assignString);
+	auto moveString = std::make_shared<ActionLevel>('5', "move", root, [this]() { this->moveString(); });
+	root->addChild(moveString);
+
+	auto concatenate = std::make_shared<MenuLevel>('6', "concatenate", root);
+	root->addChild(concatenate);
+	auto concatenateCreateNew = std::make_shared<ActionLevel>('1', "create new concatenated string", concatenate, [this]() { this->concatenateCreateNew(); });
+	concatenate->addChild(concatenateCreateNew);
+	auto concatenateAppend = std::make_shared<ActionLevel>('2', "concatenate in place", concatenate, [this]() { this->concatenateAppend(); });
+	concatenate->addChild(concatenateAppend);
+
+	auto compare = std::make_shared<MenuLevel>('7', "compare", root);
+	root->addChild(compare);
+	auto compareEqual = std::make_shared<ActionLevel>('1', "equal", compare, [this]() { this->compareEqual(); });
+	compare->addChild(compareEqual);
+	auto compareGreater = std::make_shared<ActionLevel>('2', "greater", compare, [this]() { this->compareGreater(); });
+	compare->addChild(compareGreater);
+	auto compareSmaller = std::make_shared<ActionLevel>('3', "smaller", compare, [this]() { this->compareSmaller(); });
+	compare->addChild(compareSmaller);
+	auto compareEqualOrGreater = std::make_shared<ActionLevel>('4', "equal or greater", compare, [this]() { this->compareEqualOrGreater(); });
+	compare->addChild(compareEqualOrGreater);
+	auto compareEqualOrSmaller = std::make_shared<ActionLevel>('5', "equal or smaller", compare, [this]() { this->compareEqualOrSmaller(); });
+	compare->addChild(compareEqualOrSmaller);
+
+	mRoot = root;
+}
+
 void MenuManager::addString() {
 	std::cout << "Enter string: " << std::endl;
 	std::string s;
@@ -150,45 +189,6 @@ bool MenuManager::isEmptyStorage() const {
 		return true;
 	}
 	return false;
-}
-
-void MenuManager::createMenu() {
-	using namespace Menu;
-	int id = 0;
-	auto root = std::make_shared<MenuLevel>(' ', "", nullptr);
-
-	auto addString = std::make_shared<ActionLevel>('1', "add new String", root, [this]() { this->addString(); });
-	root->addChild(addString);
-	auto removeString = std::make_shared<ActionLevel>('2', "remove String", root, [this]() { this->removeString(); });
-	root->addChild(removeString);
-	auto printStrings = std::make_shared<ActionLevel>('3', "print added strings", root, [this]() { this->printStrings(); });
-	root->addChild(printStrings);
-	auto assignString = std::make_shared<ActionLevel>('4', "assign", root, [this]() { this->assignString(); });
-	root->addChild(assignString);
-	auto moveString = std::make_shared<ActionLevel>('5', "move", root, [this]() { this->moveString(); });
-	root->addChild(moveString);
-
-	auto concatenate = std::make_shared<MenuLevel>('6', "concatenate", root);
-	root->addChild(concatenate);
-	auto concatenateCreateNew = std::make_shared<ActionLevel>('1', "create new concatenated string", concatenate, [this]() { this->concatenateCreateNew(); });
-	concatenate->addChild(concatenateCreateNew);
-	auto concatenateAppend = std::make_shared<ActionLevel>('2', "concatenate in place", concatenate, [this]() { this->concatenateAppend(); });
-	concatenate->addChild(concatenateAppend);
-
-	auto compare = std::make_shared<MenuLevel>('7', "compare", root);
-	root->addChild(compare);
-	auto compareEqual = std::make_shared<ActionLevel>('1', "equal", compare, [this]() { this->compareEqual(); });
-	compare->addChild(compareEqual);
-	auto compareGreater = std::make_shared<ActionLevel>('2', "greater", compare, [this]() { this->compareGreater(); });
-	compare->addChild(compareGreater);
-	auto compareSmaller = std::make_shared<ActionLevel>('3', "smaller", compare, [this]() { this->compareSmaller(); });
-	compare->addChild(compareSmaller);
-	auto compareEqualOrGreater = std::make_shared<ActionLevel>('4', "equal or greater", compare, [this]() { this->compareEqualOrGreater(); });
-	compare->addChild(compareEqualOrGreater);
-	auto compareEqualOrSmaller = std::make_shared<ActionLevel>('5', "equal or smaller", compare, [this]() { this->compareEqualOrSmaller(); });
-	compare->addChild(compareEqualOrSmaller);
-
-	mRoot = root;
 }
 
 }

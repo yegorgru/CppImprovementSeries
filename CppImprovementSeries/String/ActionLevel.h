@@ -18,7 +18,7 @@ public:
 	ActionLevel& operator=(ActionLevel&& other) = default;
 	~ActionLevel() = default;
 public:
-	AbstractLevelPtr makeAction() override;
+	AbstractLevelPtr makeAction() const override;
 private:
 	Function mFunction;
 };

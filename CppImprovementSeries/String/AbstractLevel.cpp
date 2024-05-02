@@ -7,8 +7,8 @@ namespace Menu {
 
 AbstractLevel::AbstractLevel(Type type, MenuSymbol symbol, const Description& description, AbstractLevelPtr parent)
 	: mType(type)
-	, mDescription(description)
 	, mSymbol(symbol)
+	, mDescription(description)
 	, mParent(parent)
 {
 	if (getBackSymbol() == mSymbol || getExitSymbol() == mSymbol) {
@@ -16,7 +16,7 @@ AbstractLevel::AbstractLevel(Type type, MenuSymbol symbol, const Description& de
 	}
 }
 
-void AbstractLevel::printLevel() {
+void AbstractLevel::printLevel() const {
 	std::cout << mSymbol << " - " << mDescription;
 }
 

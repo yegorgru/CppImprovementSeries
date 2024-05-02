@@ -151,7 +151,7 @@ String& String::operator+=(const String& other) {
 	return *this;
 }
 
-String::operator const char* () const {
+String::operator const char*() const {
 	return mData.get() ? mData.get() : nullptr;
 }
 
