@@ -8,7 +8,7 @@
 namespace Menu {
 
 MenuLevel::MenuLevel(MenuSymbol symbol, const Description& description, AbstractLevelPtr parent)
-	: AbstractLevel(Type::MenuItem, symbol, description, parent)
+	: AbstractLevel(symbol, description, parent)
 {
 
 }

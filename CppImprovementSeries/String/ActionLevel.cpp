@@ -5,7 +5,7 @@
 namespace Menu {
 
 ActionLevel::ActionLevel(MenuSymbol symbol, const Description& description, AbstractLevelPtr parent, const Function& function)
-	: AbstractLevel(Type::ActionItem, symbol, description, parent)
+	: AbstractLevel(symbol, description, parent)
 	, mFunction(function)
 {
 

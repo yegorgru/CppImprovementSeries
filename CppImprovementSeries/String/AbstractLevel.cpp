@@ -5,9 +5,8 @@
 
 namespace Menu {
 
-AbstractLevel::AbstractLevel(Type type, MenuSymbol symbol, const Description& description, AbstractLevelPtr parent)
-	: mType(type)
-	, mSymbol(symbol)
+AbstractLevel::AbstractLevel(MenuSymbol symbol, const Description& description, AbstractLevelPtr parent)
+	: mSymbol(symbol)
 	, mDescription(description)
 	, mParent(parent)
 {
