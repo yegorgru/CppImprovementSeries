@@ -8,10 +8,10 @@ class String {
 public:
 	String(const char* data = nullptr);
 	String(const std::string& data);
-	String(const String& copy);
-	String& operator=(const String& copy);
-	String(String&& copy) = default;
-	String& operator=(String&& copy) = default;
+	String(const String& other);
+	String& operator=(const String& other);
+	String(String&& other) = default;
+	String& operator=(String&& other) = default;
 	~String() = default;
 public:
 	void reserve(size_t newCapacity);

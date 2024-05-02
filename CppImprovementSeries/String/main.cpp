@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "String.h"
+#include "MenuManager.h"
 
 TEST_CASE("testing ctors and assignment operators, casting") {
 	{
@@ -100,4 +101,6 @@ int main()
 	doctest::Context context;
 	context.run();
 #endif // RUN_TESTS
+	Menu::MenuManager menu;
+	menu.run();
 }

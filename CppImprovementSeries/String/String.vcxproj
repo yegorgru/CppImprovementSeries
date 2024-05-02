@@ -127,12 +127,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AbstractLevel.cpp" />
+    <ClCompile Include="ActionLevel.cpp" />
+    <ClCompile Include="MenuLevel.cpp" />
+    <ClCompile Include="MenuManager.cpp" />
     <ClCompile Include="String.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AbstractLevel.h" />
+    <ClInclude Include="ActionLevel.h" />
     <ClInclude Include="doctest.h" />
+    <ClInclude Include="MenuLevel.h" />
+    <ClInclude Include="MenuManager.h" />
     <ClInclude Include="String.h" />
+    <ClInclude Include="utilities.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

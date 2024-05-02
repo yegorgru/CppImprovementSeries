@@ -21,15 +21,15 @@ String::String(const std::string& data)
 
 }
 
-String::String(const String& copy)
+String::String(const String& other)
 	: mSize(0)
 	, mCapacity(0)
 {
-	copyInternal(copy);
+	copyInternal(other);
 }
 
-String& String::operator=(const String& copy) {
-	return copyInternal(copy);
+String& String::operator=(const String& other) {
+	return copyInternal(other);
 }
 
 void String::reserve(size_t newCapacity) {
