@@ -23,7 +23,6 @@ void MenuManager::run() {
 
 void MenuManager::createMenu() {
 	using namespace Menu;
-	int id = 0;
 	auto root = std::make_shared<MenuLevel>(' ', "", nullptr);
 
 	auto addString = std::make_shared<ActionLevel>('1', "add new String", root, [this]() { this->addString(); });
