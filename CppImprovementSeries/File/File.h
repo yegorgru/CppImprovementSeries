@@ -19,10 +19,10 @@ public:
 	File& operator=(const File& other) = delete;
 	File(File&& other) = default;
 	File& operator=(File&& other) = default;
-	~File() = default;
+	virtual ~File() = default;
 public:
-	void open(const std::string& filename);
-	void close();
+	virtual void open(const std::string& filename);
+	virtual void close();
 	void seek(PositionType pos);
 	template <typename T>
 	void read(T& t);
@@ -30,9 +30,11 @@ public:
 	void write(const T& t);
 	PositionType getPosition();
 	PositionType getLength();
-private:
+	bool eof();
+protected:
 	void checkOpen();
-private:
+protected:
+	std::string mFilename;
     std::fstream mFile;
 };
 

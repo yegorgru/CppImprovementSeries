@@ -17,6 +17,11 @@ namespace Menu {
 		using ParentPtr = std::weak_ptr<AbstractLevel>;
 	public:
 		AbstractLevel(MenuSymbol symbol, const Description& description, AbstractLevelPtr parent);
+		AbstractLevel(const AbstractLevel& other) = delete;
+		AbstractLevel& operator=(const AbstractLevel& other) = delete;
+		AbstractLevel(AbstractLevel&& other) = default;
+		AbstractLevel& operator=(AbstractLevel&& other) = default;
+		virtual ~AbstractLevel() = default;
 	public:
 		virtual AbstractLevelPtr makeAction() const = 0;
 		void printLevel() const;

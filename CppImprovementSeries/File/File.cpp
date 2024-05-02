@@ -6,11 +6,16 @@ File::File(const std::string& filename)
 }
 
 void File::open(const std::string& filename) {
-	mFile.open(filename, std::ios_base::in | std::ios_base::out | std::ios_base::app);
+	if (filename.length() == 0) {
+		throw std::runtime_error("Empty filename");
+	}
+	mFilename = filename;
+	mFile.open(mFilename, std::ios_base::in | std::ios_base::out | std::ios_base::app);
 }
 
 void File::close() {
 	mFile.close();
+	mFilename = "";
 }
 
 void File::seek(PositionType pos) {
@@ -31,6 +36,11 @@ File::PositionType File::getLength() {
 	auto endPos = mFile.tellg();
 	mFile.seekg(curPos, std::ios::beg);
 	return endPos;
+}
+
+bool File::eof() {
+	checkOpen();
+	return mFile.eof();
 }
 
 
