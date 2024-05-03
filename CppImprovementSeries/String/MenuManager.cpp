@@ -62,7 +62,10 @@ void MenuManager::createMenu() {
 void MenuManager::addString() {
 	std::cout << "Enter string: " << std::endl;
 	std::string s;
-	std::cin >> s;
+	if (std::cin.rdbuf()->in_avail() > 0) {
+		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	}
+	std::getline(std::cin, s);
 	mStrings.push_back(String(s));
 	std::cout << "Added successfully" << std::endl;
 }
