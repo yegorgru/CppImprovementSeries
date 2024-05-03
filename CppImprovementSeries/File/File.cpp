@@ -23,12 +23,16 @@ File::PositionType File::getPosition() {
 	return mFile.tellp();
 }
 
+
 File::PositionType File::getLength() {
 	checkOpen();
-	//https://stackoverflow.com/questions/2409504/using-c-filestreams-fstream-how-can-you-determine-the-size-of-a-file
-	std::fstream file("example.txt", std::ios::binary | std::ios::ate);
-	return file.tellp();
+	auto curPos = mFile.tellg();
+	mFile.seekg(0, std::ios::end);
+	auto endPos = mFile.tellg();
+	mFile.seekg(curPos, std::ios::beg);
+	return endPos;
 }
+
 
 void File::checkOpen() {
 	if (!mFile.is_open()) {
