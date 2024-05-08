@@ -1,7 +1,6 @@
 #include "Application.h"
 #include "MenuLevel.h"
 #include "ActionLevel.h"
-#include "MyType.h"
 
 #include <iostream>
 
