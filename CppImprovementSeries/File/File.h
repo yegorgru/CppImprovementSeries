@@ -24,12 +24,13 @@ public:
 	virtual void open(const std::string& filename);
 	virtual void close();
 	void seek(PositionType pos);
-	void read(char* buff, std::streamsize count);
-	void write(const char* data, std::streamsize count);
+	virtual void read(char* buff, std::streamsize count);
+	virtual void write(const char* data, std::streamsize count);
 	PositionType getPosition();
 	PositionType getLength();
 protected:
 	void checkOpen();
+	virtual void createFile();
 protected:
 	std::string mFilename;
     std::fstream mFile;

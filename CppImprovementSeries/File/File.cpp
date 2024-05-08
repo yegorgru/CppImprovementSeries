@@ -12,7 +12,7 @@ void File::open(const std::string& filename) {
 	mFilename = filename;
 	mFile.open(mFilename, std::ios_base::in | std::ios_base::out | std::ios_base::binary);
 	if (!mFile.is_open()) {
-		mFile.open(mFilename, std::ios_base::in | std::ios_base::out | std::ios_base::binary | std::ios_base::trunc);
+		createFile();
 	}
 }
 
@@ -58,4 +58,8 @@ void File::checkOpen() {
 	if (!mFile.is_open()) {
 		throw std::runtime_error("File is not open");
 	}
+}
+
+void File::createFile() {
+	mFile.open(mFilename, std::ios_base::in | std::ios_base::out | std::ios_base::binary | std::ios_base::trunc);
 }
