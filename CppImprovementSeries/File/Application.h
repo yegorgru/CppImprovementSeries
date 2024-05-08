@@ -3,12 +3,10 @@
 #include "AbstractLevel.h"
 #include "File.h"
 
-namespace Menu {
-
-class MenuManager
+class Application
 {
 public:
-	MenuManager();
+	Application();
 public:
 	void run();
 private:
@@ -17,21 +15,19 @@ private:
 	void seek();
 	void readInt();
 	void readString();
-	void readType();
+	void readDouble();
 	void writeInt();
 	void writeString();
-	void writeType();
+	void writeDouble();
 	void getPosition();
 	void getLength();
 private:
 	void createMenu();
-	File::PositionType getPositionInput(const std::string& message);
-	int getIntInput(const std::string& message);
+	int getIntInput(const std::string& message, bool positiveCheck);
 	std::string getStringInput(const std::string& message);
 	double getDoubleInput(const std::string& message);
+	void getStringLine(std::string& str);
 private:
-	AbstractLevelPtr mRoot;
+	Menu::AbstractLevelPtr mRoot;
 	File mFile;
 };
-
-}

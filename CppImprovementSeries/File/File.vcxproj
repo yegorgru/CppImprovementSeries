@@ -134,7 +134,7 @@
     <ClCompile Include="File.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MenuLevel.cpp" />
-    <ClCompile Include="MenuManager.cpp" />
+    <ClCompile Include="Application.cpp" />
     <ClCompile Include="MyType.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -142,7 +142,7 @@
     <ClInclude Include="ActionLevel.h" />
     <ClInclude Include="File.h" />
     <ClInclude Include="MenuLevel.h" />
-    <ClInclude Include="MenuManager.h" />
+    <ClInclude Include="Application.h" />
     <ClInclude Include="MyType.h" />
     <ClInclude Include="utilities.h" />
   </ItemGroup>

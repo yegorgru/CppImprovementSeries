@@ -1,18 +1,16 @@
-#include "MenuManager.h"
+#include "Application.h"
 #include "MenuLevel.h"
 #include "ActionLevel.h"
 #include "MyType.h"
 
 #include <iostream>
 
-namespace Menu {
-
-MenuManager::MenuManager()
+Application::Application()
 {
 	createMenu();
 }
 
-void MenuManager::run() {
+void Application::run() {
 	auto activeLevel = mRoot;
 	while (true) {
 		activeLevel = activeLevel->makeAction();
@@ -22,7 +20,7 @@ void MenuManager::run() {
 	}
 }
 
-void MenuManager::createMenu() {
+void Application::createMenu() {
 	using namespace Menu;
 
 	auto root = std::make_shared<MenuLevel>(' ', "", nullptr);
@@ -47,8 +45,8 @@ void MenuManager::createMenu() {
 	read->addChild(readIntFile);
 	auto readStringFile = std::make_shared<ActionLevel>('2', "read string", read, [this]() { this->readString(); });
 	read->addChild(readStringFile);
-	auto readTypeFile = std::make_shared<ActionLevel>('3', "read type", read, [this]() { this->readType(); });
-	read->addChild(readTypeFile);
+	auto readDoubleFile = std::make_shared<ActionLevel>('3', "read double", read, [this]() { this->readDouble(); });
+	read->addChild(readDoubleFile);
 
 	auto write = std::make_shared<MenuLevel>('7', "write", baseFile);
 	baseFile->addChild(write);
@@ -56,8 +54,8 @@ void MenuManager::createMenu() {
 	write->addChild(writeIntFile);
 	auto writeStringFile = std::make_shared<ActionLevel>('2', "write string", write, [this]() { this->writeString(); });
 	write->addChild(writeStringFile);
-	auto writeTypeFile = std::make_shared<ActionLevel>('3', "write type", write, [this]() { this->writeType(); });
-	write->addChild(writeTypeFile);
+	auto writeDoubleFile = std::make_shared<ActionLevel>('3', "write double", write, [this]() { this->writeDouble(); });
+	write->addChild(writeDoubleFile);
 
 	auto typeFile = std::make_shared<MenuLevel>('2', "type file", root);
 	root->addChild(typeFile);
@@ -65,21 +63,29 @@ void MenuManager::createMenu() {
 	mRoot = root;
 }
 
-void MenuManager::open() {
-	std::cout << "Enter filename: " << std::endl;
+void Application::open() {
 	std::string name;
-	std::cin >> name;
+	while (true) {
+		std::cout << "Enter filename: " << std::endl;
+		getStringLine(name);
+		if (name.length() == 0) {
+			std::cout << "Filename can't be empty!" << std::endl;
+		}
+		else {
+			break;
+		}
+	}
 	mFile.open(name);
 	std::cout << "Open successfully" << std::endl;
 }
 
-void MenuManager::close() {
+void Application::close() {
 	mFile.close();
 	std::cout << "Close successfully" << std::endl;
 }
 
-void MenuManager::seek() {
-	auto pos = getPositionInput("Enter position");
+void Application::seek() {
+	auto pos = getIntInput("Enter position", true);
 	try
 	{
 		mFile.seek(pos);
@@ -91,10 +97,11 @@ void MenuManager::seek() {
 	}
 }
 
-void MenuManager::getPosition() {
+void Application::getPosition() {
 	try
 	{
-		std::cout << "Position is: " << mFile.getPosition() << std::endl;
+		auto pos = mFile.getPosition();
+		std::cout << "Position is: " << pos << std::endl;
 	}
 	catch (const std::exception& ex)
 	{
@@ -102,10 +109,11 @@ void MenuManager::getPosition() {
 	}
 }
 
-void MenuManager::getLength() {
+void Application::getLength() {
 	try
 	{
-		std::cout << "Length is: " << mFile.getLength() << std::endl;
+		auto length = mFile.getLength();
+		std::cout << "Length is: " << length << std::endl;
 	}
 	catch (const std::exception& ex)
 	{
@@ -113,12 +121,12 @@ void MenuManager::getLength() {
 	}
 }
 
-void MenuManager::readInt() {
+void Application::readInt() {
 	try
 	{
-		int read;
-		mFile.read(read);
-		std::cout << "Int: " << read << std::endl;
+		int number;
+		mFile.read(reinterpret_cast<char*>(&number), sizeof(number));
+		std::cout << "Int: " << number << std::endl;
 	}
 	catch (const std::exception& ex)
 	{
@@ -126,12 +134,13 @@ void MenuManager::readInt() {
 	}
 }
 
-void MenuManager::readString() {
+void Application::readString() {
 	try
 	{
-		std::string read;
-		mFile.read(read);
-		std::cout << "String: " << read << std::endl;
+		auto count = getIntInput("Enter characters count", true);
+		std::string str(count, ' ');
+		mFile.read(str.data(), count);
+		std::cout << "String: " << str << std::endl;
 	}
 	catch (const std::exception& ex)
 	{
@@ -139,12 +148,12 @@ void MenuManager::readString() {
 	}
 }
 
-void MenuManager::readType() {
+void Application::readDouble() {
 	try
 	{
-		MyType read;
-		mFile.read(read);
-		std::cout << "Type: " << read << std::endl;
+		double d;
+		mFile.read(reinterpret_cast<char*>(&d), sizeof(d));
+		std::cout << "Double: " << d << std::endl;
 	}
 	catch (const std::exception& ex)
 	{
@@ -152,11 +161,11 @@ void MenuManager::readType() {
 	}
 }
 
-void MenuManager::writeInt() {
+void Application::writeInt() {
 	try
 	{
-		auto input = getIntInput("Input int");
-		mFile.write(input);
+		auto input = getIntInput("Input int", false);
+		mFile.write(reinterpret_cast<char*>(&input), sizeof(input));
 		std::cout << "Write successfully" << std::endl;
 	}
 	catch (const std::exception& ex)
@@ -165,11 +174,11 @@ void MenuManager::writeInt() {
 	}
 }
 
-void MenuManager::writeString() {
+void Application::writeString() {
 	try
 	{
 		auto input = getStringInput("Input string");
-		mFile.write(input);
+		mFile.write(input.data(), input.size());
 		std::cout << "Write successfully" << std::endl;
 	}
 	catch (const std::exception& ex)
@@ -178,14 +187,11 @@ void MenuManager::writeString() {
 	}
 }
 
-void MenuManager::writeType() {
+void Application::writeDouble() {
 	try
 	{
-		auto input1 = getDoubleInput("Input x");
-		auto input2 = getDoubleInput("Input y");
-		auto input3 = getDoubleInput("Input z");
-		MyType coords(input1, input2, input3);
-		mFile.write(coords);
+		auto input = getDoubleInput("Input double");
+		mFile.write(reinterpret_cast<char*>(&input), sizeof(input));
 		std::cout << "Write successfully" << std::endl;
 	}
 	catch (const std::exception& ex)
@@ -194,68 +200,39 @@ void MenuManager::writeType() {
 	}
 }
 
-File::PositionType MenuManager::getPositionInput(const std::string& message) {
+int Application::getIntInput(const std::string& message, bool positiveCheck) {
 	while (true) {
 		std::cout << message << ": " << std::endl;
 		std::string str;
-		if (std::cin.rdbuf()->in_avail() > 0) {
-			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-		}
-		std::cin >> str;
+		getStringLine(str);
 		int input = 0;
 		try {
 			input = std::stoi(str);
 		}
 		catch (std::invalid_argument& ex) {
-			std::cout << "Not number provided!" << std::endl;
+			std::cout << "Not integer provided!" << std::endl;
 			continue;
 		}
-		if (input < 0) {
-			std::cout << "Incorrect position!" << std::endl;
+		if (positiveCheck && input < 0) {
+			std::cout << "Value should be greater than 0!" << std::endl;
 			continue;
 		}
 		return input;
 	}
 }
 
-int MenuManager::getIntInput(const std::string& message) {
-	while (true) {
-		std::cout << message << ": " << std::endl;
-		std::string str;
-		if (std::cin.rdbuf()->in_avail() > 0) {
-			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-		}
-		std::cin >> str;
-		int input = 0;
-		try {
-			input = std::stoi(str);
-		}
-		catch (std::invalid_argument& ex) {
-			std::cout << "Not int provided!" << std::endl;
-			continue;
-		}
-		return input;
-	}
-}
-
-std::string MenuManager::getStringInput(const std::string& message) {
+std::string Application::getStringInput(const std::string& message) {
 	std::cout << message << ": " << std::endl;
 	std::string str;
-	if (std::cin.rdbuf()->in_avail() > 0) {
-		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-	}
-	std::cin >> str;
+	getStringLine(str);
 	return str;
 }
 
-double MenuManager::getDoubleInput(const std::string& message) {
+double Application::getDoubleInput(const std::string& message) {
 	while (true) {
 		std::cout << message << ": " << std::endl;
 		std::string str;
-		if (std::cin.rdbuf()->in_avail() > 0) {
-			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-		}
-		std::cin >> str;
+		getStringLine(str);
 		double input = 0;
 		try {
 			input = std::stod(str);
@@ -268,4 +245,12 @@ double MenuManager::getDoubleInput(const std::string& message) {
 	}
 }
 
+void Application::getStringLine(std::string& str) {
+	if (std::cin.rdbuf()->in_avail() > 0) {
+		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	}
+	std::getline(std::cin, str);
+	if (std::cin.rdbuf()->in_avail() > 0) {
+		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	}
 }

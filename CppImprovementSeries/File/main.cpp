@@ -1,8 +1,8 @@
 #include "File.h"
-#include "MenuManager.h"
+#include "Application.h"
 
 int main()
 {
-	Menu::MenuManager menu;
-	menu.run();
+	Application app;
+	app.run();
 }

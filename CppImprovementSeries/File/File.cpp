@@ -10,7 +10,10 @@ void File::open(const std::string& filename) {
 		throw std::runtime_error("Empty filename");
 	}
 	mFilename = filename;
-	mFile.open(mFilename, std::ios_base::in | std::ios_base::out | std::ios_base::app);
+	mFile.open(mFilename, std::ios_base::in | std::ios_base::out | std::ios_base::binary);
+	if (!mFile.is_open()) {
+		mFile.open(mFilename, std::ios_base::in | std::ios_base::out | std::ios_base::binary | std::ios_base::trunc);
+	}
 }
 
 void File::close() {
@@ -23,11 +26,24 @@ void File::seek(PositionType pos) {
 	mFile.seekp(pos);
 }
 
+void File::read(char* buff, std::streamsize count) {
+	checkOpen();
+	if (getLength() < getPosition() + count) {
+		throw std::runtime_error("Trying to read data out of file bounds");
+	}
+	mFile.read(buff, count);
+}
+
+void File::write(const char* data, std::streamsize count) {
+	checkOpen();
+	mFile.write(data, count);
+	mFile.flush();
+}
+
 File::PositionType File::getPosition() {
 	checkOpen();
 	return mFile.tellp();
 }
-
 
 File::PositionType File::getLength() {
 	checkOpen();
@@ -37,12 +53,6 @@ File::PositionType File::getLength() {
 	mFile.seekg(curPos, std::ios::beg);
 	return endPos;
 }
-
-bool File::eof() {
-	checkOpen();
-	return mFile.eof();
-}
-
 
 void File::checkOpen() {
 	if (!mFile.is_open()) {
