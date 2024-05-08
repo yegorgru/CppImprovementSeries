@@ -62,23 +62,6 @@ void MenuManager::createMenu() {
 	auto typeFile = std::make_shared<MenuLevel>('2', "type file", root);
 	root->addChild(typeFile);
 
-	auto openTypeFile = std::make_shared<ActionLevel>('1', "open", typeFile, [this]() { this->openType(); });
-	typeFile->addChild(openTypeFile);
-	auto closeTypeFile = std::make_shared<ActionLevel>('2', "close", typeFile, [this]() { this->closeType(); });
-	typeFile->addChild(closeTypeFile);
-	auto readHumanFile = std::make_shared<ActionLevel>('3', "read human", typeFile, [this]() { this->readHuman(); });
-	typeFile->addChild(readHumanFile);
-	auto readNameFile = std::make_shared<ActionLevel>('4', "read name", typeFile, [this]() { this->readName(); });
-	typeFile->addChild(readNameFile);
-	auto readAgeFile = std::make_shared<ActionLevel>('5', "read age", typeFile, [this]() { this->readAge(); });
-	typeFile->addChild(readAgeFile);
-	auto writeHumanFile = std::make_shared<ActionLevel>('6', "write human", typeFile, [this]() { this->writeHuman(); });
-	typeFile->addChild(writeHumanFile);
-	auto setNameFile = std::make_shared<ActionLevel>('7', "set name", typeFile, [this]() { this->setName(); });
-	typeFile->addChild(setNameFile);
-	auto setAgeFile = std::make_shared<ActionLevel>('8', "set age", typeFile, [this]() { this->setAge(); });
-	typeFile->addChild(setAgeFile);
-
 	mRoot = root;
 }
 
@@ -209,84 +192,6 @@ void MenuManager::writeType() {
 	{
 		std::cout << "Error happened: " << ex.what() << std::endl;
 	}
-}
-
-void MenuManager::openType() {
-	std::cout << "Enter filename: " << std::endl;
-	std::string name;
-	std::cin >> name;
-	try
-	{
-		mTypeFile.open(name);
-	}
-	catch (const std::exception& ex)
-	{
-		std::cout << "Error happened: " << ex.what() << std::endl;
-	}
-	std::cout << "Open successfully" << std::endl;
-}
-
-void MenuManager::closeType() {
-	mTypeFile.close();
-	std::cout << "Close successfully" << std::endl;
-}
-
-void MenuManager::readHuman() {
-	try
-	{
-		mHuman.read(mTypeFile);
-		std::cout << "Name: " << mHuman.getName() << " " << "Age: " << mHuman.getAge() << std::endl;
-	}
-	catch (const std::exception& ex)
-	{
-		std::cout << "Error happened: " << ex.what() << std::endl;
-	}
-}
-
-void MenuManager::readName() {
-	try
-	{
-		mHuman.readName(mTypeFile);
-		std::cout << "Name: " << mHuman.getName() << std::endl;
-	}
-	catch (const std::exception& ex)
-	{
-		std::cout << "Error happened: " << ex.what() << std::endl;
-	}
-}
-
-void MenuManager::readAge() {
-	try
-	{
-		mHuman.readAge(mTypeFile);
-		std::cout << "Age: " << mHuman.getAge() << std::endl;
-	}
-	catch (const std::exception& ex)
-	{
-		std::cout << "Error happened: " << ex.what() << std::endl;
-	}
-}
-
-void MenuManager::writeHuman() {
-	try
-	{
-		mHuman.write(mTypeFile);
-		std::cout << "Write successfully" << std::endl;
-	}
-	catch (const std::exception& ex)
-	{
-		std::cout << "Error happened: " << ex.what() << std::endl;
-	}
-}
-
-void MenuManager::setName() {
-	auto input = getStringInput("Input name");
-	mHuman.setName(input);
-}
-
-void MenuManager::setAge() {
-	auto input = getIntInput("Input age");
-	mHuman.setAge(input);
 }
 
 File::PositionType MenuManager::getPositionInput(const std::string& message) {
