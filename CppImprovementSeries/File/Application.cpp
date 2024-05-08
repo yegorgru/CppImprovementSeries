@@ -2,24 +2,75 @@
 #include "MenuLevel.h"
 #include "ActionLevel.h"
 
-#include <iostream>
-
 Application::Application()
 {
-	createMenu();
+	mView.setMenuRoot(createMenu());
 }
 
 void Application::run() {
-	auto activeLevel = mRoot;
 	while (true) {
-		activeLevel = activeLevel->makeAction();
-		if (!activeLevel) {
+		auto actionCode = mView.runMenuItem();
+		// TODO: rework with enum class ActionCode and template Menu levels
+		if (actionCode == -1) {
+			break;
+		}
+		switch (actionCode) {
+		case 1:
+			open();
+			break;
+		case 2:
+			close();
+			break;
+		case 3:
+			seek();
+			break;
+		case 4:
+			getPosition();
+			break;
+		case 5:
+			getLength();
+			break;
+		case 6:
+			readInt();
+			break;
+		case 7:
+			readString();
+			break;
+		case 8:
+			readDouble();
+			break;
+		case 9:
+			writeInt();
+			break;
+		case 10:
+			writeString();
+			break;
+		case 11:
+			writeDouble();
+			break;
+		case 12:
+			openData();
+			break;
+		case 13:
+			closeData();
+			break;
+		case 14:
+			readData();
+			break;
+		case 15:
+			writeData();
+			break;
+		case 16:
+			getCountData();
+			break;
+		case 0:
+		default:
 			break;
 		}
 	}
 }
 
-void Application::createMenu() {
+Menu::AbstractLevelPtr Application::createMenu() {
 	using namespace Menu;
 
 	auto root = std::make_shared<MenuLevel>(' ', "", nullptr);
@@ -27,59 +78,59 @@ void Application::createMenu() {
 	auto baseFile = std::make_shared<MenuLevel>('1', "base file", root);
 	root->addChild(baseFile);
 
-	auto openFile = std::make_shared<ActionLevel>('1', "open", baseFile, [this]() { this->open(); });
+	auto openFile = std::make_shared<ActionLevel>('1', "open", baseFile, 1);
 	baseFile->addChild(openFile);
-	auto closeFile = std::make_shared<ActionLevel>('2', "close", baseFile, [this]() { this->close(); });
+	auto closeFile = std::make_shared<ActionLevel>('2', "close", baseFile, 2);
 	baseFile->addChild(closeFile);
-	auto seekFile = std::make_shared<ActionLevel>('3', "seek", baseFile, [this]() { this->seek(); });
+	auto seekFile = std::make_shared<ActionLevel>('3', "seek", baseFile, 3);
 	baseFile->addChild(seekFile);
-	auto getPositionFile = std::make_shared<ActionLevel>('4', "get position", baseFile, [this]() { this->getPosition(); });
+	auto getPositionFile = std::make_shared<ActionLevel>('4', "get position", baseFile, 4);
 	baseFile->addChild(getPositionFile);
-	auto getLengthFile = std::make_shared<ActionLevel>('5', "get length", baseFile, [this]() { this->getLength(); });
+	auto getLengthFile = std::make_shared<ActionLevel>('5', "get length", baseFile, 5);
 	baseFile->addChild(getLengthFile);
 
 	auto read = std::make_shared<MenuLevel>('6', "read", baseFile);
 	baseFile->addChild(read);
-	auto readIntFile = std::make_shared<ActionLevel>('1', "read int", read, [this]() { this->readInt(); });
+	auto readIntFile = std::make_shared<ActionLevel>('1', "read int", read, 6);
 	read->addChild(readIntFile);
-	auto readStringFile = std::make_shared<ActionLevel>('2', "read string", read, [this]() { this->readString(); });
+	auto readStringFile = std::make_shared<ActionLevel>('2', "read string", read, 7);
 	read->addChild(readStringFile);
-	auto readDoubleFile = std::make_shared<ActionLevel>('3', "read double", read, [this]() { this->readDouble(); });
+	auto readDoubleFile = std::make_shared<ActionLevel>('3', "read double", read, 8);
 	read->addChild(readDoubleFile);
 
 	auto write = std::make_shared<MenuLevel>('7', "write", baseFile);
 	baseFile->addChild(write);
-	auto writeIntFile = std::make_shared<ActionLevel>('1', "write int", write, [this]() { this->writeInt(); });
+	auto writeIntFile = std::make_shared<ActionLevel>('1', "write int", write, 9);
 	write->addChild(writeIntFile);
-	auto writeStringFile = std::make_shared<ActionLevel>('2', "write string", write, [this]() { this->writeString(); });
+	auto writeStringFile = std::make_shared<ActionLevel>('2', "write string", write, 10);
 	write->addChild(writeStringFile);
-	auto writeDoubleFile = std::make_shared<ActionLevel>('3', "write double", write, [this]() { this->writeDouble(); });
+	auto writeDoubleFile = std::make_shared<ActionLevel>('3', "write double", write, 11);
 	write->addChild(writeDoubleFile);
 
 	auto dataFile = std::make_shared<MenuLevel>('2', "data file", root);
 	root->addChild(dataFile);
 
-	auto openDataFile = std::make_shared<ActionLevel>('1', "open", dataFile, [this]() { this->openData(); });
+	auto openDataFile = std::make_shared<ActionLevel>('1', "open", dataFile, 12);
 	dataFile->addChild(openDataFile);
-	auto closeDataFile = std::make_shared<ActionLevel>('2', "close", dataFile, [this]() { this->closeData(); });
+	auto closeDataFile = std::make_shared<ActionLevel>('2', "close", dataFile, 13);
 	dataFile->addChild(closeDataFile);
-	auto readDataFile = std::make_shared<ActionLevel>('3', "read data", dataFile, [this]() { this->readData(); });
+	auto readDataFile = std::make_shared<ActionLevel>('3', "read data", dataFile, 14);
 	dataFile->addChild(readDataFile);
-	auto writeDataFile = std::make_shared<ActionLevel>('4', "write data", dataFile, [this]() { this->writeData(); });
+	auto writeDataFile = std::make_shared<ActionLevel>('4', "write data", dataFile, 15);
 	dataFile->addChild(writeDataFile);
-	auto getCountDataFile = std::make_shared<ActionLevel>('5', "get data count", dataFile, [this]() { this->getCountData(); });
+	auto getCountDataFile = std::make_shared<ActionLevel>('5', "get data count", dataFile, 16);
 	dataFile->addChild(getCountDataFile);
 
-	mRoot = root;
+	return root;
 }
 
 void Application::open() {
 	std::string name;
 	while (true) {
-		std::cout << "Enter filename: " << std::endl;
-		getStringLine(name);
+		mView.showMessage("Enter filename: ");
+		name = mView.getStringLine();
 		if (name.length() == 0) {
-			std::cout << "Filename can't be empty!" << std::endl;
+			mView.showErrorMessage("Filename can't be empty!");
 		}
 		else {
 			break;
@@ -88,29 +139,29 @@ void Application::open() {
 	try
 	{
 		mFile.open(name);
-		std::cout << "Open successfully" << std::endl;
+		mView.showMessage("Open successfully");
 	}
 	catch (const std::exception& ex)
 	{
-		std::cout << "Error happened: " << ex.what() << std::endl;
+		mView.showErrorMessage("Error happened: ", ex.what());
 	}
 }
 
 void Application::close() {
 	mFile.close();
-	std::cout << "Close successfully" << std::endl;
+	mView.showMessage("Close successfully");
 }
 
 void Application::seek() {
-	auto pos = getIntInput("Enter position", true);
+	auto pos = getInt("Enter position", true);
 	try
 	{
 		mFile.seek(pos);
-		std::cout << "Seek successfully" << std::endl;
+		mView.showMessage("Seek successfully");
 	}
 	catch (const std::exception& ex)
 	{
-		std::cout << "Error happened: " << ex.what() << std::endl;
+		mView.showErrorMessage("Error happened: ", ex.what());
 	}
 }
 
@@ -118,11 +169,11 @@ void Application::getPosition() {
 	try
 	{
 		auto pos = mFile.getPosition();
-		std::cout << "Position is: " << pos << std::endl;
+		mView.showMessage("Position is: ", pos);
 	}
 	catch (const std::exception& ex)
 	{
-		std::cout << "Error happened: " << ex.what() << std::endl;
+		mView.showErrorMessage("Error happened: ", ex.what());
 	}
 }
 
@@ -130,11 +181,11 @@ void Application::getLength() {
 	try
 	{
 		auto length = mFile.getLength();
-		std::cout << "Length is: " << length << std::endl;
+		mView.showMessage("Length is: ", length);
 	}
 	catch (const std::exception& ex)
 	{
-		std::cout << "Error happened: " << ex.what() << std::endl;
+		mView.showErrorMessage("Error happened: ", ex.what());
 	}
 }
 
@@ -143,25 +194,25 @@ void Application::readInt() {
 	{
 		int number;
 		mFile.read(reinterpret_cast<char*>(&number), sizeof(number));
-		std::cout << "Int: " << number << std::endl;
+		mView.showMessage("Int: ", number);
 	}
 	catch (const std::exception& ex)
 	{
-		std::cout << "Error happened: " << ex.what() << std::endl;
+		mView.showErrorMessage("Error happened: ", ex.what());
 	}
 }
 
 void Application::readString() {
 	try
 	{
-		auto count = getIntInput("Enter characters count", true);
+		auto count = getInt("Enter characters count", true);
 		std::string str(count, ' ');
 		mFile.read(str.data(), count);
-		std::cout << "String: " << str << std::endl;
+		mView.showMessage("String: ", str);
 	}
 	catch (const std::exception& ex)
 	{
-		std::cout << "Error happened: " << ex.what() << std::endl;
+		mView.showErrorMessage("Error happened: ", ex.what());
 	}
 }
 
@@ -170,60 +221,60 @@ void Application::readDouble() {
 	{
 		double d;
 		mFile.read(reinterpret_cast<char*>(&d), sizeof(d));
-		std::cout << "Double: " << d << std::endl;
+		mView.showMessage("Double: ", d);
 	}
 	catch (const std::exception& ex)
 	{
-		std::cout << "Error happened: " << ex.what() << std::endl;
+		mView.showErrorMessage("Error happened: ", ex.what());
 	}
 }
 
 void Application::writeInt() {
 	try
 	{
-		auto input = getIntInput("Input int", false);
+		auto input = getInt("Input int", false);
 		mFile.write(reinterpret_cast<char*>(&input), sizeof(input));
-		std::cout << "Write successfully" << std::endl;
+		mView.showMessage("Write successfully");
 	}
 	catch (const std::exception& ex)
 	{
-		std::cout << "Error happened: " << ex.what() << std::endl;
+		mView.showErrorMessage("Error happened: ", ex.what());
 	}
 }
 
 void Application::writeString() {
 	try
 	{
-		auto input = getStringInput("Input string");
+		auto input = getString("Input string");
 		mFile.write(input.data(), input.size());
-		std::cout << "Write successfully" << std::endl;
+		mView.showMessage("Write successfully");
 	}
 	catch (const std::exception& ex)
 	{
-		std::cout << "Error happened: " << ex.what() << std::endl;
+		mView.showErrorMessage("Error happened: ", ex.what());
 	}
 }
 
 void Application::writeDouble() {
 	try
 	{
-		auto input = getDoubleInput("Input double");
+		auto input = getDouble("Input double");
 		mFile.write(reinterpret_cast<char*>(&input), sizeof(input));
-		std::cout << "Write successfully" << std::endl;
+		mView.showMessage("Write successfully");
 	}
 	catch (const std::exception& ex)
 	{
-		std::cout << "Error happened: " << ex.what() << std::endl;
+		mView.showErrorMessage("Error happened: ", ex.what());
 	}
 }
 
 void Application::openData() {
 	std::string name;
 	while (true) {
-		std::cout << "Enter filename: " << std::endl;
-		getStringLine(name);
+		mView.showMessage("Enter filename: ");
+		name = mView.getStringLine();
 		if (name.length() == 0) {
-			std::cout << "Filename can't be empty!" << std::endl;
+			mView.showErrorMessage("Filename can't be empty!");
 		}
 		else {
 			break;
@@ -232,47 +283,44 @@ void Application::openData() {
 	try
 	{
 		mDataFile.open(name);
-		std::cout << "Open successfully" << std::endl;
+		mView.showMessage("Open successfully");
 	}
 	catch (const std::exception& ex)
 	{
-		std::cout << "Error happened: " << ex.what() << std::endl;
+		mView.showErrorMessage(std::string("Error happened: ") + ex.what());
 	}
 }
 
 void Application::closeData() {
 	mDataFile.close();
-	std::cout << "Close successfully" << std::endl;
+	mView.showMessage("Close successfully");
 }
 
 void Application::readData() {
 	try
 	{
 		DataFile::Data data;
-		auto idx = getIntInput("Input index", true);
+		auto idx = getInt("Input index", true);
 		mDataFile.read(data, idx);
-		std::cout << "a: " << data.a <<
-			", b: " << data.b <<
-			", c: " << data.c <<
-			", name: " << data.name.data() << std::endl;
+		mView.showMessage("a: ", data.a, ", b: ", data.b, ", c: ", data.c, ", name: ", data.name.data());
 	}
 	catch (const std::exception& ex)
 	{
-		std::cout << "Error happened: " << ex.what() << std::endl;
+		mView.showErrorMessage(std::string("Error happened: ") + ex.what());
 	}
 }
 
 void Application::writeData() {
 	try
 	{
-		auto data = getDataInput("Input data struct");
-		auto idx = getIntInput("Input index", true);
+		auto data = getData("Input data struct");
+		auto idx = getInt("Input index", true);
 		mDataFile.write(data, idx);
-		std::cout << "Write successfully" << std::endl;
+		mView.showMessage("Write successfully");
 	}
 	catch (const std::exception& ex)
 	{
-		std::cout << "Error happened: " << ex.what() << std::endl;
+		mView.showErrorMessage(std::string("Error happened: ") + ex.what());
 	}
 }
 
@@ -280,83 +328,70 @@ void Application::getCountData() {
 	try
 	{
 		auto length = mDataFile.getDataCount();
-		std::cout << "Data count is: " << length << std::endl;
+		mView.showMessage("Data count is: ", length);
 	}
 	catch (const std::exception& ex)
 	{
-		std::cout << "Error happened: " << ex.what() << std::endl;
+		mView.showErrorMessage(std::string("Error happened: ") + ex.what());
 	}
 }
 
-int Application::getIntInput(const std::string& message, bool positiveCheck) {
+int Application::getInt(const std::string& message, bool positiveCheck) {
 	while (true) {
-		std::cout << message << ": " << std::endl;
-		std::string str;
-		getStringLine(str);
+		mView.showMessage(message, ": ");
+		std::string str = mView.getStringLine();
 		int input = 0;
 		try {
 			input = std::stoi(str);
 		}
 		catch (std::invalid_argument& ex) {
-			std::cout << "Not integer provided!" << std::endl;
+			mView.showErrorMessage("Not integer provided!");
 			continue;
 		}
 		if (positiveCheck && input < 0) {
-			std::cout << "Value should be greater or equal to 0!" << std::endl;
+			mView.showErrorMessage("Value should be greater or equal to 0!");
 			continue;
 		}
 		return input;
 	}
 }
 
-std::string Application::getStringInput(const std::string& message, size_t maxSize) {
+std::string Application::getString(const std::string& message, size_t maxSize) {
 	while (true) {
-		std::cout << message << ": " << std::endl;
-		std::string str;
-		getStringLine(str);
+		mView.showMessage(message, ": ");
+		std::string str = mView.getStringLine();
 		if (str.length() > maxSize) {
-			std::cout << "String is too long!" << std::endl;
+			mView.showErrorMessage("String is too long!");
 			continue;
 		}
 		return str;
 	}
 }
 
-double Application::getDoubleInput(const std::string& message) {
+double Application::getDouble(const std::string& message) {
 	while (true) {
-		std::cout << message << ": " << std::endl;
-		std::string str;
-		getStringLine(str);
+		mView.showMessage(message, ": ");
+		std::string str = mView.getStringLine();
 		double input = 0;
 		try {
 			input = std::stod(str);
 		}
 		catch (std::invalid_argument& ex) {
-			std::cout << "Not double provided!" << std::endl;
+			mView.showErrorMessage("Not double provided!");
 			continue;
 		}
 		return input;
 	}
 }
 
-void Application::getStringLine(std::string& str) {
-	if (std::cin.rdbuf()->in_avail() > 0) {
-		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-	}
-	std::getline(std::cin, str);
-	if (std::cin.rdbuf()->in_avail() > 0) {
-		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-	}
-}
-
-DataFile::Data Application::getDataInput(const std::string& message) {
-	std::cout << message << ": " << std::endl;
+DataFile::Data Application::getData(const std::string& message) {
+	mView.showMessage(message, ": ");
 	DataFile::Data data;
-	auto name = getStringInput("Input name (<=5 characters)", 5);
+	auto name = getString("Input name (<=5 characters)", 5);
 	std::strcpy(data.name.data(), name.c_str());
 	data.name.back() = '\0';
-	data.a = getIntInput("Input a", true);
-	data.b = getIntInput("Input b", true);
-	data.c = getIntInput("Input c", true);
+	data.a = getInt("Input a", true);
+	data.b = getInt("Input b", true);
+	data.c = getInt("Input c", true);
 	return data;
 }

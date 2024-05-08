@@ -9,18 +9,16 @@ namespace Menu {
 	class ActionLevel : public AbstractLevel
 	{
 	public:
-		using Function = std::function<void()>;
-	public:
-		ActionLevel(MenuSymbol symbol, const Description& description, AbstractLevelPtr parent, const Function& function);
+		ActionLevel(MenuSymbol symbol, const Description& description, AbstractLevelPtr parent, const ActionCode& code);
 		ActionLevel(const ActionLevel& other) = delete;
 		ActionLevel& operator=(const ActionLevel& other) = delete;
 		ActionLevel(ActionLevel&& other) = default;
 		ActionLevel& operator=(ActionLevel&& other) = default;
 		~ActionLevel() = default;
 	public:
-		AbstractLevelPtr makeAction() const override;
+		ActionResult makeAction() const override;
 	private:
-		Function mFunction;
+		ActionCode mCode;
 	};
 
 }

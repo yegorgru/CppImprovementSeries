@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <string>
+#include <utility>
 
 namespace Menu {
 
@@ -13,6 +14,8 @@ namespace Menu {
 	public:
 		using MenuSymbol = char;
 		using Description = std::string;
+		using ActionCode = int;
+		using ActionResult = std::pair<AbstractLevelPtr, ActionCode>;
 	protected:
 		using ParentPtr = std::weak_ptr<AbstractLevel>;
 	public:
@@ -23,7 +26,7 @@ namespace Menu {
 		AbstractLevel& operator=(AbstractLevel&& other) = default;
 		virtual ~AbstractLevel() = default;
 	public:
-		virtual AbstractLevelPtr makeAction() const = 0;
+		virtual ActionResult makeAction() const = 0;
 		void printLevel() const;
 	public:
 		MenuSymbol getSymbol() const {

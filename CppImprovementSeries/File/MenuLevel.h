@@ -18,7 +18,7 @@ public:
 	MenuLevel& operator=(MenuLevel&& other) = default;
 	~MenuLevel() = default;
 public:
-	AbstractLevelPtr makeAction() const override;
+	ActionResult makeAction() const override;
 	void addChild(AbstractLevelPtr child);
 private:
 	void printNextOptions() const;

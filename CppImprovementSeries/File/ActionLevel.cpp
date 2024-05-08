@@ -4,16 +4,15 @@
 
 namespace Menu {
 
-	ActionLevel::ActionLevel(MenuSymbol symbol, const Description& description, AbstractLevelPtr parent, const Function& function)
+	ActionLevel::ActionLevel(MenuSymbol symbol, const Description& description, AbstractLevelPtr parent, const ActionCode& code)
 		: AbstractLevel(symbol, description, parent)
-		, mFunction(function)
+		, mCode(code)
 	{
 
 	}
 
-	AbstractLevelPtr ActionLevel::makeAction() const {
-		mFunction();
-		return mParent.lock();
+	AbstractLevel::ActionResult ActionLevel::makeAction() const {
+		return { mParent.lock(), mCode };
 	}
 
 }

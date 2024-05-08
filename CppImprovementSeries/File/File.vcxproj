@@ -136,6 +136,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MenuLevel.cpp" />
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="View.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AbstractLevel.h" />
@@ -145,6 +146,7 @@
     <ClInclude Include="MenuLevel.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="utilities.h" />
+    <ClInclude Include="View.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

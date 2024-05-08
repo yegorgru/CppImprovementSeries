@@ -3,11 +3,17 @@
 #include "AbstractLevel.h"
 #include "File.h"
 #include "DataFile.h"
+#include "View.h"
 
 class Application
 {
 public:
 	Application();
+	Application(const Application& other) = delete;
+	Application& operator=(const Application& other) = delete;
+	Application(Application&& other) = default;
+	Application& operator=(Application&& other) = default;
+	~Application() = default;
 public:
 	void run();
 private:
@@ -29,14 +35,13 @@ private:
 	void writeData();
 	void getCountData();
 private:
-	void createMenu();
-	int getIntInput(const std::string& message, bool positiveCheck);
-	std::string getStringInput(const std::string& message, size_t maxSize = SIZE_MAX);
-	double getDoubleInput(const std::string& message);
-	void getStringLine(std::string& str);
-	DataFile::Data getDataInput(const std::string& message);
+	Menu::AbstractLevelPtr createMenu();
+	int getInt(const std::string& message, bool positiveCheck);
+	std::string getString(const std::string& message, size_t maxSize = SIZE_MAX);
+	double getDouble(const std::string& message);
+	DataFile::Data getData(const std::string& message);
 private:
-	Menu::AbstractLevelPtr mRoot;
+	View mView;
 	File mFile;
 	DataFile mDataFile;
 };

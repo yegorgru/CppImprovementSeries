@@ -13,7 +13,7 @@ namespace Menu {
 
 	}
 
-	AbstractLevelPtr MenuLevel::makeAction() const {
+	AbstractLevel::ActionResult MenuLevel::makeAction() const {
 		while (true) {
 			printNextOptions();
 			if (std::cin.rdbuf()->in_avail() > 0) {
@@ -22,13 +22,13 @@ namespace Menu {
 			char ch = std::getchar();
 			auto found = mChildren.find(ch);
 			if (found != mChildren.end()) {
-				return found->second;
+				return { found->second, 0 };
 			}
 			else if (ch == getBackSymbol() && !is_uninitialized(mParent)) {
-				return mParent.lock();
+				return { mParent.lock(), 0 };
 			}
 			else if (ch == getExitSymbol()) {
-				return nullptr;
+				return { nullptr, 0 };
 			}
 		}
 	}
