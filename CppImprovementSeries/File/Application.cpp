@@ -10,115 +10,115 @@ Application::Application()
 void Application::run() {
 	while (true) {
 		auto actionCode = mView.runMenuItem();
-		// TODO: rework with enum class ActionCode and template Menu levels
-		if (actionCode == -1) {
-			break;
-		}
 		switch (actionCode) {
-		case 1:
+		case ActionCode::OpenFile:
 			open();
 			break;
-		case 2:
+		case ActionCode::CloseFile:
 			close();
 			break;
-		case 3:
+		case ActionCode::SeekFile:
 			seek();
 			break;
-		case 4:
+		case ActionCode::GetPositionFile:
 			getPosition();
 			break;
-		case 5:
+		case ActionCode::GetLengthFile:
 			getLength();
 			break;
-		case 6:
+		case ActionCode::ReadIntFile:
 			readInt();
 			break;
-		case 7:
+		case ActionCode::ReadStringFile:
 			readString();
 			break;
-		case 8:
+		case ActionCode::ReadDoubleFile:
 			readDouble();
 			break;
-		case 9:
+		case ActionCode::WriteIntFile:
 			writeInt();
 			break;
-		case 10:
+		case ActionCode::WriteStringFile:
 			writeString();
 			break;
-		case 11:
+		case ActionCode::WriteDoubleFile:
 			writeDouble();
 			break;
-		case 12:
+		case ActionCode::OpenDataFile:
 			openData();
 			break;
-		case 13:
+		case ActionCode::CloseDataFile:
 			closeData();
 			break;
-		case 14:
+		case ActionCode::ReadDataFile:
 			readData();
 			break;
-		case 15:
+		case ActionCode::WriteDataFile:
 			writeData();
 			break;
-		case 16:
+		case ActionCode::GetCountDataFile:
 			getCountData();
 			break;
-		case 0:
+		case ActionCode::Exit:
+			return;
+		case ActionCode::None:
 		default:
 			break;
 		}
 	}
 }
 
-Menu::AbstractLevelPtr Application::createMenu() {
+View::MenuItemPtr Application::createMenu() {
 	using namespace Menu;
+	using MenuLevel = MenuLevel<ActionCode>;
+	using ActionLevel = ActionLevel<ActionCode>;
 
-	auto root = std::make_shared<MenuLevel>(' ', "", nullptr);
+	auto root = std::make_shared<MenuLevel>(' ', "", nullptr, ActionCode::None);
 
-	auto baseFile = std::make_shared<MenuLevel>('1', "base file", root);
+	auto baseFile = std::make_shared<MenuLevel>('1', "base file", root, ActionCode::None);
 	root->addChild(baseFile);
 
-	auto openFile = std::make_shared<ActionLevel>('1', "open", baseFile, 1);
+	auto openFile = std::make_shared<ActionLevel>('1', "open", baseFile, ActionCode::OpenFile);
 	baseFile->addChild(openFile);
-	auto closeFile = std::make_shared<ActionLevel>('2', "close", baseFile, 2);
+	auto closeFile = std::make_shared<ActionLevel>('2', "close", baseFile, ActionCode::CloseFile);
 	baseFile->addChild(closeFile);
-	auto seekFile = std::make_shared<ActionLevel>('3', "seek", baseFile, 3);
+	auto seekFile = std::make_shared<ActionLevel>('3', "seek", baseFile, ActionCode::SeekFile);
 	baseFile->addChild(seekFile);
-	auto getPositionFile = std::make_shared<ActionLevel>('4', "get position", baseFile, 4);
+	auto getPositionFile = std::make_shared<ActionLevel>('4', "get position", baseFile, ActionCode::GetPositionFile);
 	baseFile->addChild(getPositionFile);
-	auto getLengthFile = std::make_shared<ActionLevel>('5', "get length", baseFile, 5);
+	auto getLengthFile = std::make_shared<ActionLevel>('5', "get length", baseFile, ActionCode::GetLengthFile);
 	baseFile->addChild(getLengthFile);
 
-	auto read = std::make_shared<MenuLevel>('6', "read", baseFile);
+	auto read = std::make_shared<MenuLevel>('6', "read", baseFile, ActionCode::None);
 	baseFile->addChild(read);
-	auto readIntFile = std::make_shared<ActionLevel>('1', "read int", read, 6);
+	auto readIntFile = std::make_shared<ActionLevel>('1', "read int", read, ActionCode::ReadIntFile);
 	read->addChild(readIntFile);
-	auto readStringFile = std::make_shared<ActionLevel>('2', "read string", read, 7);
+	auto readStringFile = std::make_shared<ActionLevel>('2', "read string", read, ActionCode::ReadStringFile);
 	read->addChild(readStringFile);
-	auto readDoubleFile = std::make_shared<ActionLevel>('3', "read double", read, 8);
+	auto readDoubleFile = std::make_shared<ActionLevel>('3', "read double", read, ActionCode::ReadDoubleFile);
 	read->addChild(readDoubleFile);
 
-	auto write = std::make_shared<MenuLevel>('7', "write", baseFile);
+	auto write = std::make_shared<MenuLevel>('7', "write", baseFile, ActionCode::None);
 	baseFile->addChild(write);
-	auto writeIntFile = std::make_shared<ActionLevel>('1', "write int", write, 9);
+	auto writeIntFile = std::make_shared<ActionLevel>('1', "write int", write, ActionCode::WriteIntFile);
 	write->addChild(writeIntFile);
-	auto writeStringFile = std::make_shared<ActionLevel>('2', "write string", write, 10);
+	auto writeStringFile = std::make_shared<ActionLevel>('2', "write string", write, ActionCode::WriteStringFile);
 	write->addChild(writeStringFile);
-	auto writeDoubleFile = std::make_shared<ActionLevel>('3', "write double", write, 11);
+	auto writeDoubleFile = std::make_shared<ActionLevel>('3', "write double", write, ActionCode::WriteDoubleFile);
 	write->addChild(writeDoubleFile);
 
-	auto dataFile = std::make_shared<MenuLevel>('2', "data file", root);
+	auto dataFile = std::make_shared<MenuLevel>('2', "data file", root, ActionCode::None);
 	root->addChild(dataFile);
 
-	auto openDataFile = std::make_shared<ActionLevel>('1', "open", dataFile, 12);
+	auto openDataFile = std::make_shared<ActionLevel>('1', "open", dataFile, ActionCode::OpenDataFile);
 	dataFile->addChild(openDataFile);
-	auto closeDataFile = std::make_shared<ActionLevel>('2', "close", dataFile, 13);
+	auto closeDataFile = std::make_shared<ActionLevel>('2', "close", dataFile, ActionCode::CloseDataFile);
 	dataFile->addChild(closeDataFile);
-	auto readDataFile = std::make_shared<ActionLevel>('3', "read data", dataFile, 14);
+	auto readDataFile = std::make_shared<ActionLevel>('3', "read data", dataFile, ActionCode::ReadDataFile);
 	dataFile->addChild(readDataFile);
-	auto writeDataFile = std::make_shared<ActionLevel>('4', "write data", dataFile, 15);
+	auto writeDataFile = std::make_shared<ActionLevel>('4', "write data", dataFile, ActionCode::WriteDataFile);
 	dataFile->addChild(writeDataFile);
-	auto getCountDataFile = std::make_shared<ActionLevel>('5', "get data count", dataFile, 16);
+	auto getCountDataFile = std::make_shared<ActionLevel>('5', "get data count", dataFile, ActionCode::GetCountDataFile);
 	dataFile->addChild(getCountDataFile);
 
 	return root;

@@ -35,7 +35,7 @@ private:
 	void writeData();
 	void getCountData();
 private:
-	Menu::AbstractLevelPtr createMenu();
+	View::MenuItemPtr createMenu();
 	int getInt(const std::string& message, bool positiveCheck);
 	std::string getString(const std::string& message, size_t maxSize = SIZE_MAX);
 	double getDouble(const std::string& message);

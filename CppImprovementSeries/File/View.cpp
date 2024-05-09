@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-Menu::AbstractLevel::ActionCode View::runMenuItem() {
+ActionCode View::runMenuItem() {
 	if (!mMenuRoot) {
 		throw std::runtime_error("Root menu item was not set");
 	}
@@ -11,7 +11,7 @@ Menu::AbstractLevel::ActionCode View::runMenuItem() {
 	}
 	auto actionResult = mMenuItem->makeAction();
 	mMenuItem = actionResult.first;
-	return mMenuItem ? actionResult.second : -1;
+	return mMenuItem ? actionResult.second : ActionCode::Exit;
 }
 
 std::string View::getStringLine() {

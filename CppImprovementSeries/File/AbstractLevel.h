@@ -3,23 +3,23 @@
 #include <memory>
 #include <string>
 #include <utility>
+#include <stdexcept>
+#include <iostream>
 
 namespace Menu {
 
-	class AbstractLevel;
-	using AbstractLevelPtr = std::shared_ptr<AbstractLevel>;
-
+	template<typename TActionCode>
 	class AbstractLevel
 	{
 	public:
 		using MenuSymbol = char;
 		using Description = std::string;
-		using ActionCode = int;
-		using ActionResult = std::pair<AbstractLevelPtr, ActionCode>;
+		using AbstractLevelPtr = std::shared_ptr<AbstractLevel<TActionCode>>;
+		using ActionResult = std::pair<AbstractLevelPtr, TActionCode>;
 	protected:
 		using ParentPtr = std::weak_ptr<AbstractLevel>;
 	public:
-		AbstractLevel(MenuSymbol symbol, const Description& description, AbstractLevelPtr parent);
+		AbstractLevel(MenuSymbol symbol, const Description& description, AbstractLevelPtr parent, const TActionCode& mCode);
 		AbstractLevel(const AbstractLevel& other) = delete;
 		AbstractLevel& operator=(const AbstractLevel& other) = delete;
 		AbstractLevel(AbstractLevel&& other) = default;
@@ -42,6 +42,23 @@ namespace Menu {
 		MenuSymbol mSymbol;
 		Description mDescription;
 		ParentPtr mParent;
+		TActionCode mCode;
 	};
 
+	template<typename TActionCode>
+	AbstractLevel<TActionCode>::AbstractLevel(MenuSymbol symbol, const Description& description, AbstractLevelPtr parent, const TActionCode& code)
+		: mSymbol(symbol)
+		, mDescription(description)
+		, mParent(parent)
+		, mCode(code)
+	{
+		if (getBackSymbol() == mSymbol || getExitSymbol() == mSymbol) {
+			throw std::runtime_error("Incorrect menu symbol provided");
+		}
+	}
+
+	template<typename TActionCode>
+	void AbstractLevel<TActionCode>::printLevel() const {
+		std::cout << mSymbol << " - " << mDescription;
+	}
 }

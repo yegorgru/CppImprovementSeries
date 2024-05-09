@@ -1,12 +1,15 @@
 #pragma once
 
 #include "AbstractLevel.h"
+#include "ActionCode.h"
 
 #include <string>
 #include <iostream>
 
 class View
 {
+public:
+	using MenuItemPtr = Menu::AbstractLevel<ActionCode>::AbstractLevelPtr;
 public:
 	View() = default;
 	View(const View& other) = delete;
@@ -15,19 +18,19 @@ public:
 	View& operator=(View&& other) = default;
 	~View() = default;
 public:
-	Menu::AbstractLevel::ActionCode runMenuItem();
+	ActionCode runMenuItem();
 	std::string getStringLine();
 	template <typename... Args>
 	void showMessage(const Args&... args);
 	template <typename... Args>
 	void showErrorMessage(const Args&... args);
 public:
-	void setMenuRoot(Menu::AbstractLevelPtr menuRoot) {
+	void setMenuRoot(MenuItemPtr menuRoot) {
 		mMenuRoot = menuRoot;
 	}
 private:
-	Menu::AbstractLevelPtr mMenuRoot;
-	Menu::AbstractLevelPtr mMenuItem;
+	MenuItemPtr mMenuRoot;
+	MenuItemPtr mMenuItem;
 };
 
 template <typename... Args>

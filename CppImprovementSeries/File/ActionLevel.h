@@ -6,10 +6,16 @@
 
 namespace Menu {
 
-	class ActionLevel : public AbstractLevel
+	template<typename TActionCode>
+	class ActionLevel : public AbstractLevel<TActionCode>
 	{
 	public:
-		ActionLevel(MenuSymbol symbol, const Description& description, AbstractLevelPtr parent, const ActionCode& code);
+		using MenuSymbol = AbstractLevel<TActionCode>::MenuSymbol;
+		using Description = AbstractLevel<TActionCode>::Description;
+		using AbstractLevelPtr = AbstractLevel<TActionCode>::AbstractLevelPtr;
+		using ActionResult = AbstractLevel<TActionCode>::ActionResult;
+	public:
+		ActionLevel(MenuSymbol symbol, const Description& description, AbstractLevelPtr parent, const TActionCode& code);
 		ActionLevel(const ActionLevel& other) = delete;
 		ActionLevel& operator=(const ActionLevel& other) = delete;
 		ActionLevel(ActionLevel&& other) = default;
@@ -17,8 +23,17 @@ namespace Menu {
 		~ActionLevel() = default;
 	public:
 		ActionResult makeAction() const override;
-	private:
-		ActionCode mCode;
 	};
 
+	template<typename TActionCode>
+	ActionLevel<TActionCode>::ActionLevel(MenuSymbol symbol, const Description& description, AbstractLevelPtr parent, const TActionCode& code)
+		: AbstractLevel<TActionCode>(symbol, description, parent, code)
+	{
+
+	}
+
+	template<typename TActionCode>
+	AbstractLevel<TActionCode>::ActionResult ActionLevel<TActionCode>::makeAction() const {
+		return { AbstractLevel<TActionCode>::mParent.lock(), AbstractLevel<TActionCode>::mCode };
+	}
 }
