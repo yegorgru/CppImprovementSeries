@@ -2,7 +2,8 @@
 
 enum class ActionCode {
 	Exit,
-	None,
+	UnsupportedKey,
+	CreateFile,
 	OpenFile,
 	CloseFile,
 	SeekFile,
@@ -14,9 +15,11 @@ enum class ActionCode {
 	WriteIntFile,
 	WriteStringFile,
 	WriteDoubleFile,
+	CreateDataFile,
 	OpenDataFile,
 	CloseDataFile,
 	ReadDataFile,
-	WriteDataFile,
+	SetDataFile,
+	AppendDataFile,
 	GetCountDataFile
 };

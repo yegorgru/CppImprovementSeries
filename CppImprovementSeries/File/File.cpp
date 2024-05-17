@@ -1,24 +1,32 @@
 #include "File.h"
+#include "Exception.h"
 
-File::File(const std::string& filename)
+File::File(const std::string& filename, Mode mode)
 {
-	open(filename);
+	open(filename, mode);
 }
 
-void File::open(const std::string& filename) {
+void File::open(const std::string& filename, Mode mode) {
+	if (mFile.is_open()) {
+		close();
+	}
 	if (filename.length() == 0) {
-		throw std::runtime_error("Empty filename");
+		throw FileException(ErrorMessages::EmptyFilename);
 	}
 	mFilename = filename;
-	mFile.open(mFilename, std::ios_base::in | std::ios_base::out | std::ios_base::binary);
+	if (mode == Mode::Open) {
+		mFile.open(mFilename, std::ios_base::in | std::ios_base::out | std::ios_base::binary);
+	}
+	else if(mode == Mode::Trunc) {
+		mFile.open(mFilename, std::ios_base::in | std::ios_base::out | std::ios_base::binary | std::ios_base::trunc);
+	}
 	if (!mFile.is_open()) {
-		createFile();
+		throw FileException(ErrorMessages::OpenFailed);
 	}
 }
 
 void File::close() {
 	mFile.close();
-	mFilename = "";
 }
 
 void File::seek(PositionType pos) {
@@ -29,7 +37,7 @@ void File::seek(PositionType pos) {
 void File::read(char* buff, std::streamsize count) {
 	checkOpen();
 	if (getLength() < getPosition() + count) {
-		throw std::runtime_error("Trying to read data out of file bounds");
+		throw FileException(ErrorMessages::ReadOutOfBounds);
 	}
 	mFile.read(buff, count);
 }
@@ -56,10 +64,6 @@ File::PositionType File::getLength() {
 
 void File::checkOpen() {
 	if (!mFile.is_open()) {
-		throw std::runtime_error("File is not open");
+		throw FileException(ErrorMessages::FileNotOpen);
 	}
-}
-
-void File::createFile() {
-	mFile.open(mFilename, std::ios_base::in | std::ios_base::out | std::ios_base::binary | std::ios_base::trunc);
 }

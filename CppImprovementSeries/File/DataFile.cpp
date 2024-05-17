@@ -1,58 +1,62 @@
 #include "DataFile.h"
-#include <iostream>
+#include "Exception.h"
 
-DataFile::DataFile(const std::string& filename)
+DataFile::DataFile(const std::string& filename, Mode mode)
 	: mDataCount(0)
 	, mDataStart(0)
 {
-	open(filename);
+	open(filename, mode);
 }
 
-void DataFile::open(const std::string& filename) {
-	File::open(filename);
-	File::seek(0);
-	bool isInconsistent = false;
-	auto headerSize = getHeaderSize();
-	if (File::getLength() < headerSize) {
-		isInconsistent = true;
+void DataFile::open(const std::string& filename, Mode mode) {
+	if (mFile.is_open()) {
+		close();
 	}
-	else {
+	File::open(filename, mode);
+	File::seek(0);
+	if (mode == Mode::Trunc) {
+		File::write(mFileMarker.data(), mFileMarker.size());
+		mDataCount = 0;
+		File::write(reinterpret_cast<char*>(&mDataCount), sizeof(mDataCount));
+		mDataStart = File::getPosition();
+		mDataStart += sizeof(mDataStart);
+		File::write(reinterpret_cast<char*>(&mDataStart), sizeof(mDataStart));
+	}
+	else if (mode == Mode::Open) {
+		auto headerSize = getHeaderSize();
+		if (File::getLength() < headerSize) {
+			close();
+			throw DataFileException(ErrorMessages::FileNotConsistent);
+		}
 		std::string fileMarker(mFileMarker.length(), ' ');
 		File::read(fileMarker.data(), fileMarker.size());
 		if (fileMarker != mFileMarker) {
-			isInconsistent = true;
+			close();
+			throw DataFileException(ErrorMessages::FileNotConsistent);
 		}
-		else {
-			File::read(reinterpret_cast<char*>(&mDataCount), sizeof(mDataCount));
-			File::read(reinterpret_cast<char*>(&mDataStart), sizeof(mDataStart));
-			if (mDataStart != File::getPosition() || File::getLength() != mDataCount * sizeof(Data) + headerSize) {
-				isInconsistent = true;
-			}
+		File::read(reinterpret_cast<char*>(&mDataCount), sizeof(mDataCount));
+		File::read(reinterpret_cast<char*>(&mDataStart), sizeof(mDataStart));
+		if (mDataStart != File::getPosition() || File::getLength() != mDataCount * sizeof(Data) + headerSize) {
+			close();
+			throw DataFileException(ErrorMessages::FileNotConsistent);
 		}
 	}
-	if (isInconsistent) {
-		close();
-		throw std::runtime_error("File is not consistent");
-	}
-}
-
-void DataFile::close() {
-	File::close();
-	mDataCount = 0;
-	mDataStart = 0;
 }
 
 void DataFile::read(Data& data, size_t idx) {
 	checkOpen();
 	if (idx >= mDataCount) {
-		throw std::out_of_range("Idx is out of range");
+		throw DataFileException(ErrorMessages::IdxOutOfRange);
 	}
 	File::seek(idx * sizeof(data) + getHeaderSize());
 	File::read(reinterpret_cast<char*>(&data), sizeof(data));
 }
 
-void DataFile::write(const Data& data, size_t idx) {
+void DataFile::write(const Data& data, size_t idx, bool checkIndex) {
 	checkOpen();
+	if (checkIndex && idx >= mDataCount) {
+		throw DataFileException(ErrorMessages::IdxOutOfRange);
+	}
 	File::seek(idx * sizeof(data) + getHeaderSize());
 	File::write(reinterpret_cast<const char*>(&data), sizeof(data));
 	if (idx >= mDataCount) {
@@ -62,19 +66,14 @@ void DataFile::write(const Data& data, size_t idx) {
 	}
 }
 
+void DataFile::append(const Data& data) {
+	checkOpen();
+	write(data, mDataCount, false);
+}
+
 size_t DataFile::getDataCount() {
 	checkOpen();
 	return mDataCount;
-}
-
-void DataFile::createFile() {
-	File::createFile();
-	File::write(mFileMarker.data(), mFileMarker.size());
-	mDataCount = 0;
-	File::write(reinterpret_cast<char*>(&mDataCount), sizeof(mDataCount));
-	mDataStart = File::getPosition();
-	mDataStart += sizeof(mDataStart);
-	File::write(reinterpret_cast<char*>(&mDataStart), sizeof(mDataStart));
 }
 
 File::PositionType DataFile::getHeaderSize() {
