@@ -19,7 +19,7 @@ public:
 	};
 public:
 	File() = default;
-    explicit File(const std::string& filename, Mode mode);
+    explicit File(const std::string& filename, Mode mode = Mode::Open);
 	File(const File& other) = delete;
 	File& operator=(const File& other) = delete;
 	File(File&& other) = default;
