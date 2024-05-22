@@ -219,7 +219,7 @@ TEST_CASE("testing size_t predicates with ctor") {
 		}
 		delete p;
 	}
-	SUBCASE("base base 2") {
+	SUBCASE("child child 2") {
 		child* p = new child;
 		p->print_int(2);
 		auto message = redirect.output();
@@ -233,7 +233,7 @@ TEST_CASE("testing size_t predicates with ctor") {
 		}
 		delete p;
 	}
-	SUBCASE("base base 10") {
+	SUBCASE("child child 10") {
 		child* p = new child;
 		p->print_int(10);
 		auto message = redirect.output();
