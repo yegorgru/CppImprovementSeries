@@ -204,8 +204,52 @@ TEST_CASE("testing size_t inline predicates with initialization list") {
     REQUIRE(found == m.end());
 }
 
+TEST_CASE("testing size_t inline predicates (with auto parameters) with initialization list") {
+    std::map < size_t, std::string, decltype([](const auto& lhs, const auto& rhs) {return lhs > rhs; }) > m = {
+        {2, "two"},
+        {1, "one"},
+        {3, "three"},
+        {4, "four"},
+        {5, "five"},
+    };
+    std::vector<size_t> correct = { 5, 4, 3, 2, 1 };
+    REQUIRE_EQ(correct.size(), m.size());
+    auto counter = 0;
+    for (const auto& [k, v] : m) {
+        CHECK_EQ(k, correct[counter++]);
+    }
+
+    auto found = m.find(2);
+    REQUIRE(found != m.end());
+    CHECK_EQ(found->second, "two");
+    found = m.find(10);
+    REQUIRE(found == m.end());
+}
+
 TEST_CASE("testing param inline predicates with initialization list") {
     std::map<param, std::string, decltype([](const param& lhs, const param& rhs) {return lhs > rhs; })> m = {
+        {{2}, "two"},
+        {{1}, "one" },
+        {{3}, "three" },
+        {{4}, "four" },
+        {{5}, "five" },
+    };
+    std::vector<size_t> correct = { 5, 4, 3, 2, 1 };
+    REQUIRE_EQ(correct.size(), m.size());
+    auto  counter = 0;
+    for (const auto& [k, v] : m) {
+        CHECK_EQ(k.v, correct[counter++]);
+    }
+
+    auto found = m.find(1);
+    REQUIRE(found != m.end());
+    CHECK_EQ(found->second, "one");
+    found = m.find(6);
+    REQUIRE(found == m.end());
+}
+
+TEST_CASE("testing param inline predicates (with auto parameters) with initialization list") {
+    std::map < param, std::string, decltype([](const auto& lhs, const auto& rhs) {return lhs > rhs; }) > m = {
         {{2}, "two"},
         {{1}, "one" },
         {{3}, "three" },
