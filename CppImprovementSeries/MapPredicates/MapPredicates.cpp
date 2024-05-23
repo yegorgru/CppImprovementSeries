@@ -1,6 +1,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <functional>
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
@@ -255,6 +256,54 @@ TEST_CASE("testing param inline predicates (with auto parameters) with initializ
         {{3}, "three" },
         {{4}, "four" },
         {{5}, "five" },
+    };
+    std::vector<size_t> correct = { 5, 4, 3, 2, 1 };
+    REQUIRE_EQ(correct.size(), m.size());
+    auto  counter = 0;
+    for (const auto& [k, v] : m) {
+        CHECK_EQ(k.v, correct[counter++]);
+    }
+
+    auto found = m.find(1);
+    REQUIRE(found != m.end());
+    CHECK_EQ(found->second, "one");
+    found = m.find(6);
+    REQUIRE(found == m.end());
+}
+
+TEST_CASE("testing size_t inline predicates with initialization list") {
+    std::map < size_t, std::string, std::function<bool(const size_t&, const size_t&)> > m = { {
+            {2, "two"},
+            {1, "one"},
+            {3, "three"},
+            {4, "four"},
+            {5, "five"},
+        },
+        [](const size_t& lhs, const size_t& rhs) {return lhs > rhs; }
+    };
+    std::vector<size_t> correct = { 5, 4, 3, 2, 1 };
+    REQUIRE_EQ(correct.size(), m.size());
+    auto counter = 0;
+    for (const auto& [k, v] : m) {
+        CHECK_EQ(k, correct[counter++]);
+    }
+
+    auto found = m.find(2);
+    REQUIRE(found != m.end());
+    CHECK_EQ(found->second, "two");
+    found = m.find(10);
+    REQUIRE(found == m.end());
+}
+
+TEST_CASE("testing param inline predicates with initialization list") {
+    std::map < param, std::string, std::function<bool(const param&, const param&)> > m = { {
+            {{2}, "two"},
+            {{1}, "one" },
+            {{3}, "three" },
+            {{4}, "four" },
+            {{5}, "five" },
+        },
+        [](const param& lhs, const param& rhs) {return lhs > rhs; }
     };
     std::vector<size_t> correct = { 5, 4, 3, 2, 1 };
     REQUIRE_EQ(correct.size(), m.size());
