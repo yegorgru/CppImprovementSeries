@@ -5,7 +5,7 @@ using namespace std;
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 
-struct base {
+/*struct base {
 	virtual ~base() = default;
 
 	void print_int() {
@@ -39,6 +39,72 @@ struct child : base {
 	}
 
 	inline static std::string WARNING_MESSAGE = "default assigment takes place, expecting replacing : 1 on 2";
+};*/
+
+/*struct base {
+	virtual ~base() = default;
+
+	virtual void print_int(int a = get_default_value()) {
+		cout << "print_int base : " << a << endl;
+		mDefaultValueUsed = false;
+	}
+
+protected:
+	static int get_default_value() {
+		mDefaultValueUsed = true;
+		return mDefaultValue;
+	}
+
+	inline static bool mDefaultValueUsed = false;
+	inline static int mDefaultValue = 1;
+};
+
+struct child : base {
+	~child() = default;
+
+	void print_int(int a = get_default_value()) override {
+		if (mDefaultValueUsed) {
+			cout << "default assigment takes place, expecting replacing : " << base::mDefaultValue << " on " << mDefaultValue << endl;
+		}
+		cout << "print_int child : " << a << endl;
+		mDefaultValueUsed = false;
+	}
+
+protected:
+	static int get_default_value() {
+		mDefaultValueUsed = true;
+		return mDefaultValue;
+	}
+
+	inline static int mDefaultValue = 2;
+};*/
+
+struct base {
+	virtual ~base() = default;
+
+	virtual void print_int(const int& a = mDefaultValue) {
+		cout << "print_int base : " << a << endl;
+	}
+
+protected:
+	inline static const int mDefaultValue = 1;
+};
+
+struct child : base {
+	~child() = default;
+
+	void print_int(const int& a = mDefaultValue) override {
+		if (&a == &base::mDefaultValue) {
+			cout << "Default assigment takes place. Base default value: " << base::mDefaultValue << ", child default value: " << mDefaultValue << ". Base value is used" << endl;
+		}
+		else if (&a == &mDefaultValue) {
+			cout << "Default assigment takes place. Base default value: " << base::mDefaultValue << ", child default value: " << mDefaultValue << ". Child value is used" << endl;
+		}
+		cout << "print_int child : " << a << endl;
+	}
+
+protected:
+	inline static const int mDefaultValue = 2;
 };
 
 struct base_original {
@@ -79,6 +145,10 @@ public:
 
 TEST_CASE("testing size_t predicates with ctor") {
 	StdIOStreamRedirect redirect;
+	ostringstream baseValueUsedMsg;
+	baseValueUsedMsg << "Default assigment takes place. Base default value: " << 1 << ", child default value: " << 2 << ". Base value is used";
+	ostringstream childValueUsedMsg;
+	childValueUsedMsg << "Default assigment takes place. Base default value: " << 1 << ", child default value: " << 2 << ". Child value is used";
 	SUBCASE("base child empty") {
 		base* p = new child;
 		p->print_int();
@@ -88,7 +158,7 @@ TEST_CASE("testing size_t predicates with ctor") {
 			base_original* po = new child_original;
 			po->print_int();
 			auto messageOriginal = redirectForOriginal.output();
-			CHECK_EQ(child::WARNING_MESSAGE + "\n" + messageOriginal, message);
+			CHECK_EQ(baseValueUsedMsg.str() + "\n" + messageOriginal, message);
 			delete po;
 		}
 		delete p;
@@ -200,7 +270,7 @@ TEST_CASE("testing size_t predicates with ctor") {
 			child_original* po = new child_original;
 			po->print_int();
 			auto messageOriginal = redirectForOriginal.output();
-			CHECK_EQ(child::WARNING_MESSAGE + "\n" + messageOriginal, message);
+			CHECK_EQ(childValueUsedMsg.str() + "\n" + messageOriginal, message);
 			delete po;
 		}
 		delete p;
