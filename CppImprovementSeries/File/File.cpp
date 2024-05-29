@@ -10,19 +10,13 @@ void File::open(const std::string& filename, Mode mode) {
 	if (mFile.is_open()) {
 		close();
 	}
-	if (filename.length() == 0) {
-		throw FileException(ErrorMessages::EmptyFilename);
-	}
-	mFilename = filename;
 	if (mode == Mode::Open) {
-		mFile.open(mFilename, std::ios_base::in | std::ios_base::out | std::ios_base::binary);
+		mFile.open(filename, std::ios_base::in | std::ios_base::out | std::ios_base::binary);
 	}
 	else if(mode == Mode::Trunc) {
-		mFile.open(mFilename, std::ios_base::in | std::ios_base::out | std::ios_base::binary | std::ios_base::trunc);
+		mFile.open(filename, std::ios_base::in | std::ios_base::out | std::ios_base::binary | std::ios_base::trunc);
 	}
-	if (!mFile.is_open()) {
-		throw FileException(ErrorMessages::OpenFailed);
-	}
+	checkOpen();
 }
 
 void File::close() {
@@ -45,7 +39,6 @@ void File::read(char* buff, std::streamsize count) {
 void File::write(const char* data, std::streamsize count) {
 	checkOpen();
 	mFile.write(data, count);
-	mFile.flush();
 }
 
 File::PositionType File::getPosition() {
@@ -62,7 +55,7 @@ File::PositionType File::getLength() {
 	return endPos;
 }
 
-void File::checkOpen() {
+void File::checkOpen() const {
 	if (!mFile.is_open()) {
 		throw FileException(ErrorMessages::FileNotOpen);
 	}

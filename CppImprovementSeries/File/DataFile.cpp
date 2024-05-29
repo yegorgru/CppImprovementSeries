@@ -71,11 +71,11 @@ void DataFile::append(const Data& data) {
 	write(data, mDataCount, false);
 }
 
-size_t DataFile::getDataCount() {
+size_t DataFile::getDataCount() const {
 	checkOpen();
 	return mDataCount;
 }
 
-File::PositionType DataFile::getHeaderSize() {
+File::PositionType DataFile::getHeaderSize() const {
 	return mFileMarker.length() + sizeof(mDataCount) + sizeof(mDataStart);
 }

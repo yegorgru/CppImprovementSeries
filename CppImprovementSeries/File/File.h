@@ -34,15 +34,12 @@ public:
 	PositionType getPosition();
 	PositionType getLength();
 protected:
-	void checkOpen();
+	void checkOpen() const;
 protected:
-	std::string mFilename;
     std::fstream mFile;
 	class ErrorMessages {
 	public:
-		inline static std::string EmptyFilename = "Filename is empty";
-		inline static std::string OpenFailed = "Failed to open file";
-		inline static std::string FileNotOpen = "File is not open";
-		inline static std::string ReadOutOfBounds = "Trying to read data out of file bounds";
+		inline static const std::string FileNotOpen = "File is not open";
+		inline static const std::string ReadOutOfBounds = "Trying to read data out of file bounds";
 	};
 };

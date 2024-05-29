@@ -21,15 +21,15 @@ public:
 	DataFile& operator=(const DataFile& other) = delete;
 	DataFile(DataFile&& other) = default;
 	DataFile& operator=(DataFile&& other) = default;
-	virtual ~DataFile() = default;
+	~DataFile() = default;
 public:
 	void open(const std::string& filename, Mode mode) override;
 	void read(Data& data, size_t idx);
 	void write(const Data& data, size_t idx, bool checkIndex = true);
 	void append(const Data& data);
-	size_t getDataCount();
+	size_t getDataCount() const;
 protected:
-	PositionType getHeaderSize();
+	PositionType getHeaderSize() const;
 protected:
 	using File::read;
 	using File::write;
@@ -39,8 +39,8 @@ protected:
 	size_t mDataStart = 0;
 	class ErrorMessages {
 	public:
-		inline static std::string IdxOutOfRange = "Idx is out of range";
-		inline static std::string FileNotConsistent = "File is not consistent";
+		inline static const std::string IdxOutOfRange = "Idx is out of range";
+		inline static const std::string FileNotConsistent = "File is not consistent";
 	};
 };
 

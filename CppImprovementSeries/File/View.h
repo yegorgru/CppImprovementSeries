@@ -26,9 +26,9 @@ public:
 	public:
 		using MenuMessages = std::vector<std::string>;
 	public:
-		inline static std::string MenuTitle = "\tMENU";
-		inline static std::string EnterChoice = "Enter your choice: ";
-		inline static MenuMessages MenuItems = {
+		inline static const std::string MenuTitle = "\tMENU";
+		inline static const std::string EnterChoice = "Enter your choice: ";
+		inline static const MenuMessages MenuItems = {
 			"1  - Create/truncate plain file",
 			"2  - Open and append plain file",
 			"3  - Close plain file",
@@ -54,7 +54,7 @@ public:
 
 	class ErrorMessages {
 	public:
-		inline static std::string IncorrectUserInput = "Incorrect user input";
+		inline static const std::string IncorrectUserInput = "Incorrect user input";
 	};
 };
 
