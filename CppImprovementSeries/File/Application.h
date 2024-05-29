@@ -7,23 +7,6 @@
 class Application
 {
 public:
-	Application() = default;
-	Application(const Application& other) = delete;
-	Application& operator=(const Application& other) = delete;
-	Application(Application&& other) = default;
-	Application& operator=(Application&& other) = default;
-	~Application() = default;
-public:
-	void run();
-private:
-	int getInt(const std::string& message, bool positiveCheck);
-	double getDouble(const std::string& message);
-	DataFile::Data getData(const std::string& message);
-private:
-	View mView;
-	File mFile;
-	DataFile mDataFile;
-private:
 	class Messages {
 	public:
 		inline static const std::string EnterFilename = "Enter filename";
@@ -42,7 +25,7 @@ private:
 		inline static const std::string Exit = "Exiting";
 		inline static const std::string TooLongName = "Too long name provided. Resized to 5 characters";
 	};
-	
+
 	class ErrorMessages {
 	public:
 		inline static const std::string ErrorHappened = "Error happened: ";
@@ -52,4 +35,21 @@ private:
 		inline static const std::string IncorrectIntInput = "Incorrect int input";
 		inline static const std::string IncorrectDoubleInput = "Incorrect double input";
 	};
+public:
+	Application() = default;
+	Application(const Application& other) = delete;
+	Application& operator=(const Application& other) = delete;
+	Application(Application&& other) = default;
+	Application& operator=(Application&& other) = default;
+	~Application() = default;
+public:
+	void run();
+private:
+	int getInt(const std::string& message, bool positiveCheck);
+	double getDouble(const std::string& message);
+	DataFile::Data getData(const std::string& message);
+private:
+	View mView;
+	File mFile;
+	DataFile mDataFile;
 };

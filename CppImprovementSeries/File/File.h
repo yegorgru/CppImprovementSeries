@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Mode.h"
+
 #include <fstream>
 #include <string>
 #include <stdexcept>
@@ -13,9 +15,12 @@ class File
 public:
 	using PositionType = std::ios::pos_type;
 public:
-	enum class Mode {
-		Open,
-		Trunc
+	class ErrorMessages {
+	public:
+		inline static const std::string FileNotOpen = "File is not open";
+		inline static const std::string ReadOutOfBounds = "Trying to read data out of file bounds";
+		inline static const std::string FileAlreadyExists = "File already exists";
+		inline static const std::string FileDoesntExists = "File doesn't exist";
 	};
 public:
 	File() = default;
@@ -37,9 +42,4 @@ protected:
 	void checkOpen() const;
 protected:
     std::fstream mFile;
-	class ErrorMessages {
-	public:
-		inline static const std::string FileNotOpen = "File is not open";
-		inline static const std::string ReadOutOfBounds = "Trying to read data out of file bounds";
-	};
 };

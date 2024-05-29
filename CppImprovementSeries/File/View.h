@@ -22,6 +22,7 @@ public:
 	void showMessage(const Args&... args);
 	template <typename... Args>
 	void showErrorMessage(const Args&... args);
+public:
 	class Messages {
 	public:
 		using MenuMessages = std::vector<std::string>;

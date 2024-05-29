@@ -14,7 +14,7 @@ void DataFile::open(const std::string& filename, Mode mode) {
 	}
 	File::open(filename, mode);
 	File::seek(0);
-	if (mode == Mode::Trunc) {
+	if (hasMode(mode, Mode::Trunc) || hasMode(mode, Mode::Create)) {
 		File::write(mFileMarker.data(), mFileMarker.size());
 		mDataCount = 0;
 		File::write(reinterpret_cast<char*>(&mDataCount), sizeof(mDataCount));
@@ -22,7 +22,7 @@ void DataFile::open(const std::string& filename, Mode mode) {
 		mDataStart += sizeof(mDataStart);
 		File::write(reinterpret_cast<char*>(&mDataStart), sizeof(mDataStart));
 	}
-	else if (mode == Mode::Open) {
+	else if (hasMode(mode, Mode::Open) || hasMode(mode, Mode::Ate)) {
 		auto headerSize = getHeaderSize();
 		if (File::getLength() < headerSize) {
 			close();

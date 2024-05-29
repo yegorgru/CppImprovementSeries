@@ -1,6 +1,8 @@
 #include "File.h"
 #include "Exception.h"
 
+#include <filesystem>
+
 File::File(const std::string& filename, Mode mode)
 {
 	open(filename, mode);
@@ -10,12 +12,29 @@ void File::open(const std::string& filename, Mode mode) {
 	if (mFile.is_open()) {
 		close();
 	}
-	if (mode == Mode::Open) {
-		mFile.open(filename, std::ios_base::in | std::ios_base::out | std::ios_base::binary);
+
+	bool fileExisted = std::filesystem::exists(filename);
+
+	auto stdMode = std::ios_base::in | std::ios_base::out;
+	if (hasMode(mode, Mode::Trunc)) {
+		if (!fileExisted) {
+			throw FileException(ErrorMessages::FileDoesntExists);
+		}
+		stdMode |= std::ios_base::trunc;
 	}
-	else if(mode == Mode::Trunc) {
-		mFile.open(filename, std::ios_base::in | std::ios_base::out | std::ios_base::binary | std::ios_base::trunc);
+	else if (hasMode(mode, Mode::Create)) {
+		if (fileExisted) {
+			throw FileException(ErrorMessages::FileAlreadyExists);
+		}
+		stdMode |= std::ios_base::trunc;
 	}
+	if (hasMode(mode, Mode::Ate)) {
+		stdMode |= std::ios_base::ate;
+	}
+	if (hasMode(mode, Mode::Binary)) {
+		stdMode |= std::ios_base::binary;
+	}
+	mFile.open(filename, stdMode);
 	checkOpen();
 }
 

@@ -7,13 +7,13 @@ void Application::run() {
 	static auto createFileHandler = [this]() {
 		mView.showMessage(Messages::EnterFilename);
 		auto name = mView.getStringLine();
-		mFile.open(name, File::Mode::Trunc);
+		mFile.open(name, Mode::Trunc);
 		mView.showMessage(Messages::OpenSuccess);
 	};
 	static auto openFileHandler = [this]() {
 		mView.showMessage(Messages::EnterFilename);
 		auto name = mView.getStringLine();
-		mFile.open(name, File::Mode::Open);
+		mFile.open(name, Mode::Open);
 		mView.showMessage(Messages::OpenSuccess);
 	};
 	static auto closeFileHandler = [this]() {
@@ -68,13 +68,13 @@ void Application::run() {
 	static auto createDataFileHandler = [this]() {
 		mView.showMessage(Messages::EnterFilename);
 		auto name = mView.getStringLine();
-		mDataFile.open(name, File::Mode::Trunc);
+		mDataFile.open(name, Mode::Trunc);
 		mView.showMessage(Messages::OpenSuccess);
 	};
 	static auto openDataFileHandler = [this]() {
 		mView.showMessage(Messages::EnterFilename);
 		auto name = mView.getStringLine();
-		mDataFile.open(name, File::Mode::Open);
+		mDataFile.open(name, Mode::Open);
 		mView.showMessage(Messages::OpenSuccess);
 	};
 	static auto closeDataFileHandler = [this]() {
