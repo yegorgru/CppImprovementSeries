@@ -12,7 +12,7 @@ void DataFile::open(const std::string& filename, Mode mode) {
 	if (mFile.is_open()) {
 		close();
 	}
-	File::open(filename, mode);
+	File::open(filename, mode | Mode::Binary);
 	File::seek(0);
 	if (hasMode(mode, Mode::Trunc) || hasMode(mode, Mode::Create)) {
 		File::write(mFileMarker.data(), mFileMarker.size());

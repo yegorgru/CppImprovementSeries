@@ -79,3 +79,33 @@ void File::checkOpen() const {
 		throw FileException(ErrorMessages::FileNotOpen);
 	}
 }
+
+File& File::operator<<(int value) {
+	mFile << value;
+	return *this;
+}
+
+File& File::operator<<(double value) {
+	mFile << value;
+	return *this;
+}
+
+File& File::operator<<(const std::string& value) {
+	mFile << value;
+	return *this;
+}
+
+File& File::operator>>(int& value) {
+	mFile >> value;
+	return *this;
+}
+
+File& File::operator>>(double& value) {
+	mFile >> value;
+	return *this;
+}
+
+File& File::operator>>(std::string& value) {
+	mFile >> value;
+	return *this;
+}

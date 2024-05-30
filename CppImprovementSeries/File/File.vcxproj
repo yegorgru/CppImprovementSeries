@@ -138,14 +138,13 @@
     <ClCompile Include="View.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ActionCode.h" />
     <ClInclude Include="DataFile.h" />
     <ClInclude Include="doctest.h" />
     <ClInclude Include="Exception.h" />
     <ClInclude Include="File.h" />
     <ClInclude Include="Application.h" />
-    <ClInclude Include="Mode.h" />
     <ClInclude Include="View.h" />
+    <ClInclude Include="Mode.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

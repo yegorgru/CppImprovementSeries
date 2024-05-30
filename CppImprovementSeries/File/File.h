@@ -38,6 +38,13 @@ public:
 	virtual void write(const char* data, std::streamsize count);
 	PositionType getPosition();
 	PositionType getLength();
+public:
+	File& operator<<(int value);
+	File& operator<<(double value);
+	File& operator<<(const std::string& value);
+	File& operator>>(int& value);
+	File& operator>>(double& value);
+	File& operator>>(std::string& value);
 protected:
 	void checkOpen() const;
 protected:
