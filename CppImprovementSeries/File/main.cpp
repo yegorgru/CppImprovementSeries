@@ -126,7 +126,7 @@ public:
 	inline static const std::string InputString = "Input string";
 	inline static const std::string InputDouble = "Input double";
 	inline static const std::string InputIndex = "Input index";
-	inline static const std::string InputDataStruct = "Input data struct in format name a b c";
+	inline static const std::string InputDataStruct = "Input data struct in format: <name> <a> <b> <c>";
 };
 
 class ErrorMessages {
@@ -146,10 +146,9 @@ int main()
 
 	File file;
 	DataFile dataFile;
-	View view;
-	Application app(view);
+	Application app;
 
-	auto getInt = [&view](const std::string& message, bool positiveCheck) {
+	auto getInt = [](const View& view, const std::string& message, bool positiveCheck) {
 		view.showMessage(message);
 		auto inputStream = std::istringstream(view.getStringLine());
 		int input = 0;
@@ -163,7 +162,7 @@ int main()
 		return input;
 	};
 
-	auto getDouble = [&view](const std::string& message) {
+	auto getDouble = [](const View& view, const std::string& message) {
 		view.showMessage(message);
 		auto inputStream = std::istringstream(view.getStringLine());
 		double input = 0;
@@ -174,7 +173,7 @@ int main()
 		return input;
 	};
 
-	auto getData = [&view](const std::string& message) {
+	auto getData = [](const View& view, const std::string& message) {
 		view.showMessage(message);
 		DataFile::Data data;
 		std::istringstream is(view.getStringLine());
@@ -192,157 +191,157 @@ int main()
 		return data;
 	};
 
-	app.registerMenuItem(0, "Exit", [&app]() {app.setExitFlag(); });
-	app.registerMenuItem(1, "Create plain file", [&view, &file]() {		
+	app.registerMenuItem(0, "Exit", [&app](const View& view) {app.setExitFlag(); });
+	app.registerMenuItem(1, "Create plain file", [&file](const View& view) {
 		view.showMessage(Messages::EnterFilename);
 		auto name = view.getStringLine();
 		file.open(name, Mode::Create);
 		view.showMessage(Messages::OpenSuccess); 
 	});
-	app.registerMenuItem(2, "Truncate plain file", [&view, &file]() {
+	app.registerMenuItem(2, "Truncate plain file", [&file](const View& view) {
 		view.showMessage(Messages::EnterFilename);
 		auto name = view.getStringLine();
 		file.open(name, Mode::Trunc);
 		view.showMessage(Messages::OpenSuccess);
 	});
-	app.registerMenuItem(3, "Open plain file", [&view, &file]() {
+	app.registerMenuItem(3, "Open plain file", [&file](const View& view) {
 		view.showMessage(Messages::EnterFilename);
 		auto name = view.getStringLine();
 		file.open(name, Mode::Open);
 		view.showMessage(Messages::OpenSuccess);
 	});
-	app.registerMenuItem(4, "Open plain file in ate mode", [&view, &file]() {
+	app.registerMenuItem(4, "Open plain file in ate mode", [&file](const View& view) {
 		view.showMessage(Messages::EnterFilename);
 		auto name = view.getStringLine();
 		file.open(name, Mode::Ate);
 		view.showMessage(Messages::OpenSuccess);
 	});
-	app.registerMenuItem(5, "Open plain file in binary mode", [&view, &file]() {
+	app.registerMenuItem(5, "Open plain file in binary mode", [&file](const View& view) {
 		view.showMessage(Messages::EnterFilename);
 		auto name = view.getStringLine();
 		file.open(name, Mode::Open | Mode::Binary);
 		view.showMessage(Messages::OpenSuccess);
 	});
-	app.registerMenuItem(6, "Close plain file", [&view, &file]() {
+	app.registerMenuItem(6, "Close plain file", [&file](const View& view) {
 		file.close();
 		view.showMessage(Messages::CloseSuccess);
 	});
-	app.registerMenuItem(7, "Seek plain file", [&view, &file, &getInt]() {
-		auto pos = getInt(Messages::EnterPosition, true);
+	app.registerMenuItem(7, "Seek plain file", [&file, &getInt](const View& view) {
+		auto pos = getInt(view, Messages::EnterPosition, true);
 		file.seek(pos);
 		view.showMessage(Messages::SeekSuccess);
 	});
-	app.registerMenuItem(8, "Get position plain file", [&view, &file]() {
+	app.registerMenuItem(8, "Get position plain file", [&file](const View& view) {
 		auto pos = file.getPosition();
 		view.showMessage(pos);
 	});
-	app.registerMenuItem(9, "Get length plain file", [&view, &file]() {
+	app.registerMenuItem(9, "Get length plain file", [&file](const View& view) {
 		auto length = file.getLength();
 		view.showMessage(length);
 	});
-	app.registerMenuItem(10, "Read int from plain file", [&view, &file]() {
+	app.registerMenuItem(10, "Read int from plain file", [&file](const View& view) {
 		int number;
 		file >> number;
 		view.showMessage(number);
 	});
-	app.registerMenuItem(11, "Read string from plain file", [&view, &file]() {
+	app.registerMenuItem(11, "Read string from plain file", [&file](const View& view) {
 		std::string str;
 		file >> str;
 		view.showMessage(str);
 	});
-	app.registerMenuItem(12, "Read double from plain file", [&view, &file]() {
+	app.registerMenuItem(12, "Read double from plain file", [&file](const View& view) {
 		double d;
 		file >> d;
 		view.showMessage(d);
 	});
-	app.registerMenuItem(13, "Write int to plain file", [&view, &file, &getInt]() {
-		auto input = getInt(Messages::InputInt, false);
+	app.registerMenuItem(13, "Write int to plain file", [&file, &getInt](const View& view) {
+		auto input = getInt(view, Messages::InputInt, false);
 		file << input;
 		view.showMessage(Messages::WriteSuccess);
 	});
-	app.registerMenuItem(14, "Write string to plain file", [&view, &file]() {
+	app.registerMenuItem(14, "Write string to plain file", [&file](const View& view) {
 		view.showMessage(Messages::InputString);
 		auto input = view.getStringLine();
 		file << input;
 		view.showMessage(Messages::WriteSuccess);
 	});
-	app.registerMenuItem(15, "Write double to plain file", [&view, &file, &getDouble]() {
-		auto input = getDouble(Messages::InputDouble);
+	app.registerMenuItem(15, "Write double to plain file", [&file, &getDouble](const View& view) {
+		auto input = getDouble(view, Messages::InputDouble);
 		file << input;
 		view.showMessage(Messages::WriteSuccess);
 	});
-	app.registerMenuItem(16, "Read binary int from plain file", [&view, &file]() {
+	app.registerMenuItem(16, "Read binary int from plain file", [&file](const View& view) {
 		int number;
 		file.read(reinterpret_cast<char*>(&number), sizeof(number));
 		view.showMessage(number);
 		});
-	app.registerMenuItem(17, "Read binary string from plain file", [&view, &file, &getInt]() {
-		auto count = getInt(Messages::EnterCharactersCount, true);
+	app.registerMenuItem(17, "Read binary string from plain file", [&file, &getInt](const View& view) {
+		auto count = getInt(view, Messages::EnterCharactersCount, true);
 		std::string str(count, ' ');
 		file.read(str.data(), count);
 		view.showMessage(str);
 		});
-	app.registerMenuItem(18, "Read binary double from plain file", [&view, &file]() {
+	app.registerMenuItem(18, "Read binary double from plain file", [&file](const View& view) {
 		double d;
 		file.read(reinterpret_cast<char*>(&d), sizeof(d));
 		view.showMessage(d);
 		});
-	app.registerMenuItem(19, "Write binary int to plain file", [&view, &file, &getInt]() {
-		auto input = getInt(Messages::InputInt, false);
+	app.registerMenuItem(19, "Write binary int to plain file", [&file, &getInt](const View& view) {
+		auto input = getInt(view, Messages::InputInt, false);
 		file.write(reinterpret_cast<char*>(&input), sizeof(input));
 		view.showMessage(Messages::WriteSuccess);
 		});
-	app.registerMenuItem(20, "Write binary string to plain file", [&view, &file]() {
+	app.registerMenuItem(20, "Write binary string to plain file", [&file](const View& view) {
 		view.showMessage(Messages::InputString);
 		auto input = view.getStringLine();
 		file.write(input.data(), input.size());
 		view.showMessage(Messages::WriteSuccess);
 		});
-	app.registerMenuItem(21, "Write binary double to plain file", [&view, &file, &getDouble]() {
-		auto input = getDouble(Messages::InputDouble);
+	app.registerMenuItem(21, "Write binary double to plain file", [&file, &getDouble](const View& view) {
+		auto input = getDouble(view, Messages::InputDouble);
 		file.write(reinterpret_cast<char*>(&input), sizeof(input));
 		view.showMessage(Messages::WriteSuccess);
 	});
-	app.registerMenuItem(22, "Create data file", [&view, &dataFile]() {
+	app.registerMenuItem(22, "Create data file", [&dataFile](const View& view) {
 		view.showMessage(Messages::EnterFilename);
 		auto name = view.getStringLine();
 		dataFile.open(name, Mode::Create);
 		view.showMessage(Messages::OpenSuccess);
 		});
-	app.registerMenuItem(23, "Truncate data file", [&view, &dataFile]() {
+	app.registerMenuItem(23, "Truncate data file", [&dataFile](const View& view) {
 		view.showMessage(Messages::EnterFilename);
 		auto name = view.getStringLine();
 		dataFile.open(name, Mode::Trunc);
 		view.showMessage(Messages::OpenSuccess);
 	});
-	app.registerMenuItem(24, "Open data file", [&view, &dataFile]() {
+	app.registerMenuItem(24, "Open data file", [&dataFile](const View& view) {
 		view.showMessage(Messages::EnterFilename);
 		auto name = view.getStringLine();
 		dataFile.open(name, Mode::Open);
 		view.showMessage(Messages::OpenSuccess);
 	});
-	app.registerMenuItem(25, "Close data file", [&view, &dataFile]() {
+	app.registerMenuItem(25, "Close data file", [&dataFile](const View& view) {
 		dataFile.close();
 		view.showMessage(Messages::CloseSuccess);
 	});
-	app.registerMenuItem(26, "Read data", [&view, &dataFile, &getInt]() {
+	app.registerMenuItem(26, "Read data", [&dataFile, &getInt](const View& view) {
 		DataFile::Data data;
-		auto idx = getInt(Messages::InputIndex, true);
+		auto idx = getInt(view, Messages::InputIndex, true);
 		dataFile.read(data, idx);
 		view.showMessage("a: ", data.a, ", b: ", data.b, ", c: ", data.c, ", name: ", data.name.data());
 	});
-	app.registerMenuItem(27, "Set data", [&view, &dataFile, &getInt, &getData]() {
-		auto data = getData(Messages::InputDataStruct);
-		auto idx = getInt(Messages::InputIndex, true);
+	app.registerMenuItem(27, "Set data", [&dataFile, &getInt, &getData](const View& view) {
+		auto data = getData(view, Messages::InputDataStruct);
+		auto idx = getInt(view, Messages::InputIndex, true);
 		dataFile.write(data, idx);
 		view.showMessage(Messages::WriteSuccess);
 	});
-	app.registerMenuItem(28, "Append data", [&view, &dataFile, &getData]() {
-		auto data = getData(Messages::InputDataStruct);
+	app.registerMenuItem(28, "Append data", [&dataFile, &getData](const View& view) {
+		auto data = getData(view, Messages::InputDataStruct);
 		dataFile.append(data);
 		view.showMessage(Messages::AppendSuccess);
 	});
-	app.registerMenuItem(29, "Get data count", [&view, &dataFile]() {
+	app.registerMenuItem(29, "Get data count", [&dataFile](const View& view) {
 		auto length = dataFile.getDataCount();
 		view.showMessage(length);
 	});

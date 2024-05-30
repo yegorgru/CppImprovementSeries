@@ -3,13 +3,6 @@
 
 #include <sstream>
 
-Application::Application(const View& view)
-	: mExitFlag(false)
-	, mView(view)
-{
-
-}
-
 void Application::run() {
 	while (!mExitFlag) {
 		try
@@ -17,7 +10,7 @@ void Application::run() {
 			auto menuKey = runMenu();
 			auto menuItem = mMenuDictionary.find(menuKey);
 			if (menuItem != mMenuDictionary.end()) {
-				menuItem->second.mCommand();
+				menuItem->second.mCommand(mView);
 			}
 			else {
 				mView.showErrorMessage(ErrorMessages::UnsupportedMenuKey);
@@ -31,12 +24,7 @@ void Application::run() {
 	mView.showMessage(Messages::Exit);
 }
 
-void Application::registerMenuItem(int code, const std::string& title, const std::function<void()>& func) {
-	auto found = mMenuDictionary.find(code);
-	if (found != mMenuDictionary.end()) {
-		mView.showErrorMessage(ErrorMessages::MenuKeyAlreadyUsed);
-		return;
-	}
+void Application::registerMenuItem(int code, const std::string& title, const std::function<void(const View&)>& func) {
 	mMenuDictionary[code] = { title, func };
 }
 

@@ -23,7 +23,7 @@ public:
 		inline static const std::string ErrorHappened = "Error happened: ";
 	};
 public:
-	Application(const View& view);
+	Application() = default;
 	Application(const Application& other) = delete;
 	Application& operator=(const Application& other) = delete;
 	Application(Application&& other) = default;
@@ -31,7 +31,7 @@ public:
 	~Application() = default;
 public:
 	void run();
-	void registerMenuItem(int code, const std::string& title, const std::function<void()>& func);
+	void registerMenuItem(int code, const std::string& title, const std::function<void(const View&)>& func);
 	void setExitFlag() {
 		mExitFlag = true;
 	}
@@ -40,12 +40,12 @@ private:
 private:
 	struct MenuItem {
 		std::string mTitle;
-		std::function<void()> mCommand;
+		std::function<void(const View&)> mCommand;
 	};
 private:
 	using MenuDictionary = std::map<int, MenuItem>;
 private:
-	bool mExitFlag;
-	const View& mView;
+	bool mExitFlag = false;
+	View mView;
 	MenuDictionary mMenuDictionary;
 };
