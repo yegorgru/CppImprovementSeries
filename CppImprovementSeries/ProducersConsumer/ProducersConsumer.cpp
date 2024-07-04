@@ -8,9 +8,9 @@
 int main() {
     using namespace std::chrono_literals;
 
-    std::atomic_size_t value = 9;
-    std::atomic_bool isTenWriting = true;
-    std::atomic_bool isValueChanged = false;
+    std::atomic_size_t value = 10;
+    std::atomic_bool isTenWriting = false;
+    std::atomic_bool isValueChanged = true;
     std::atomic_bool quit = false;
 
     auto quiter = [&isTenWriting, &isValueChanged]() {
@@ -37,7 +37,10 @@ int main() {
             if (quit.load()) {
                 break;
             }
-            value = value == 99 ? 10 : value + 1;
+            value = (value + 10) % 100;
+            if (value == 0) {
+                value = 10;
+            }
             isValueChanged.store(true);
             isValueChanged.notify_one();
             isTenWriting.store(false);
@@ -53,12 +56,14 @@ int main() {
             if (quit.load()) {
                 break;
             }
-            ++value;
-            isValueChanged.store(true);
-            isValueChanged.notify_one();
-            if (value.load() % 10 == 9) {
+            value = value / 10 * 10 + (value % 10 + 1) % 10;
+            if (value % 10 == 0) {
                 isTenWriting.store(true);
                 isTenWriting.notify_one();
+            }
+            else {
+                isValueChanged.store(true);
+                isValueChanged.notify_one();
             }
         }
     });
@@ -77,11 +82,12 @@ int main() {
 
     std::jthread fileReader([&quit, &quiter]() {
         std::string filename("control.txt");
-        std::fstream f(filename, std::ios_base::trunc | std::ios_base::out);
-        f.close();
+        {
+            std::fstream f(filename, std::ios_base::trunc | std::ios_base::out);
+        }
         while (!quit.load()) {
             std::this_thread::sleep_for(1000ms);
-            f.open(filename, std::ios_base::in);
+            std::fstream f(filename, std::ios_base::in);
             f.seekg(0);
             std::string s;
             f >> s;
