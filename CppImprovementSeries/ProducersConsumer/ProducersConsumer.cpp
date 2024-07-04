@@ -31,16 +31,14 @@ int main() {
 
     std::jthread p1([&value, &isTenWriting, &isValueChanged, &quit]() {
         while (!quit.load()) {
-            std::this_thread::sleep_for(1ms);
             isTenWriting.wait(false);
             isValueChanged.wait(true);
             if (quit.load()) {
                 break;
             }
-            value = (value + 10) % 100;
-            if (value == 0) {
-                value = 10;
-            }
+            auto valueDup = value.load();
+            valueDup = (valueDup + 10) % 100;
+            value.store(valueDup == 0 ? 10 : valueDup);
             isValueChanged.store(true);
             isValueChanged.notify_one();
             isTenWriting.store(false);
@@ -50,14 +48,20 @@ int main() {
 
     std::jthread p2([&value, &isTenWriting, &isValueChanged, &quit]() {
         while (!quit.load()) {
-            std::this_thread::sleep_for(1ms);
             isTenWriting.wait(true);
             isValueChanged.wait(true);
             if (quit.load()) {
                 break;
             }
-            value = value / 10 * 10 + (value % 10 + 1) % 10;
-            if (value % 10 == 0) {
+            auto valueDup = value.load();
+
+            auto lastDigit = valueDup % 10;
+            lastDigit = (lastDigit + 1) % 10;
+
+            valueDup = valueDup / 10 * 10 + lastDigit;
+
+            value.store(valueDup);
+            if (valueDup % 10 == 0) {
                 isTenWriting.store(true);
                 isTenWriting.notify_one();
             }
@@ -74,7 +78,8 @@ int main() {
             if (quit.load()) {
                 break;
             }
-            std::osyncstream(std::cout) << value << std::endl;
+            std::cout << time(0) << " " << value.load() << std::endl;
+            std::this_thread::sleep_for(1s);
             isValueChanged.store(false);
             isValueChanged.notify_all();
         }
@@ -86,7 +91,7 @@ int main() {
             std::fstream f(filename, std::ios_base::trunc | std::ios_base::out);
         }
         while (!quit.load()) {
-            std::this_thread::sleep_for(1000ms);
+            std::this_thread::sleep_for(1s);
             std::fstream f(filename, std::ios_base::in);
             f.seekg(0);
             std::string s;
